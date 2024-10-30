@@ -1,0 +1,54 @@
+{
+    "name": "PlayerJoystick",
+    "maps": [
+        {
+            "name": "Movement",
+            "id": "afd01bd9-106d-4caa-b7a2-672b7bab709a",
+            "actions": [
+                {
+                    "name": "InputMovement",
+                    "type": "Value",
+                    "id": "93ef098e-3852-475f-8552-2ff77b741759",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "InputAim",
+                    "type": "Value",
+                    "id": "3773c057-167d-4cd1-b2c3-ef5b7ee5595b",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d2554bb0-ecb5-4e67-8b7f-f8ba01e71f28",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InputMovement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6140b887-424c-44c4-aa92-c62620a544da",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InputAim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

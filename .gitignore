@@ -10,6 +10,7 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
@@ -70,3 +71,13 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/Plugins/Demigiant.meta
+Assets/Plugins/Demigiant/DOTween.meta
+Assets/Plugins/Demigiant/DOTween/Editor.meta
+/Assets/[Ff]irebase/
+/Assets/Plugins/tvOS/
+/Assets/Plugins/iOS/
+/Assets/Editor Default Resources/Firebase/
+/Assets/ExternalDependencyManager/
+/Assets/GoogleMobileAds/
+/Assets/GeneratedLocalRepo/

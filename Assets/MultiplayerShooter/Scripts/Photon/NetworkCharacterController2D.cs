@@ -1,17 +1,24 @@
 using Fusion;
 using UnityEngine;
-using Zenject;
 
 public class NetworkCharacterController2D : NetworkBehaviour
 {
-    public float moveSpeed = 5f;
-    private Rigidbody2D _rigidbody2D;
-    private Transform _playerTransform;
+    [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private Transform _visualObject;
+    [SerializeField] private Transform _weaponTransform;
+    private Rigidbody _rigidbody;
+
+    [Networked, OnChangedRender(nameof(UpdateDirection))] private bool IsFacingLeft { get; set; }
+    [Networked, OnChangedRender(nameof(UpdateWeaponRotation))] private float AimAngle { get; set; }
 
     void Awake()
     {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
-        _playerTransform = GetComponent<Transform>();
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    private void UpdateDirection()
+    {
+        _visualObject.localScale = new Vector3(IsFacingLeft ? -1 : 1, 1, 1);
     }
 
     public override void FixedUpdateNetwork()
@@ -19,34 +26,45 @@ public class NetworkCharacterController2D : NetworkBehaviour
         if (GetInput(out NetworkInputData data))
         {
             MovementPlayer(data);
-
             DirectionMovementPlayer(data);
-
+            AimWeapon(data.aimDirection);
         }
     }
 
     private void DirectionMovementPlayer(NetworkInputData data)
     {
-        if (data.direction.x < 0 && _playerTransform.localScale.x > 0)
+        if (data.direction.x < 0 && !IsFacingLeft)
         {
-            RPC_SetDirection(true);
+            IsFacingLeft = true;
         }
-        else if (data.direction.x > 0 && _playerTransform.localScale.x < 0)
+        else if (data.direction.x > 0 && IsFacingLeft)
         {
-            RPC_SetDirection(false);
+            IsFacingLeft = false;
         }
     }
-
 
     private void MovementPlayer(NetworkInputData data)
     {
-        Vector2 movement = data.direction * moveSpeed * Runner.DeltaTime;
-        _rigidbody2D.MovePosition(_rigidbody2D.position + movement);
+        Vector2 movement = data.direction * _moveSpeed * Runner.DeltaTime;
+        Vector3 movementDirection = new Vector3(movement.x, movement.y, 0);
+        _rigidbody.MovePosition(_rigidbody.position + movementDirection);
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    private void RPC_SetDirection(bool isFacingLeft)
+    private void AimWeapon(Vector2 aimDirection)
     {
-        _playerTransform.localScale = new Vector3(isFacingLeft ? -1 : 1, 1, 1);
+        if (aimDirection.sqrMagnitude > 0.01f)
+        {
+            float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
+            AimAngle = angle;
+        }
+    }
+
+    private void UpdateWeaponRotation()
+    {
+        _weaponTransform.rotation = Quaternion.Euler(0, 0, AimAngle);
+
+        bool isAimingLeft = AimAngle > 90 || AimAngle < -90;
+
+        _weaponTransform.localScale = new Vector3(1, isAimingLeft ? -1 : 1, 1);
     }
 }

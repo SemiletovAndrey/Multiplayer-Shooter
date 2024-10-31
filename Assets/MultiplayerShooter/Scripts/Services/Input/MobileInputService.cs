@@ -18,6 +18,7 @@ public class MobileInputService : IInputService
         _joystickInputMovement = _playerJoystick.Movement.InputMovement;
         _joystickInputAim = _playerJoystick.Movement.InputAim;
 
+        _joystickInputAim.Enable();
         _playerJoystick.Enable();
         _joystickInputMovement.Enable();
     }

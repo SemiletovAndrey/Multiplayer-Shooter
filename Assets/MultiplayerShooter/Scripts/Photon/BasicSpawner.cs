@@ -20,10 +20,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        var data = new NetworkInputData
+        NetworkInputData data = new NetworkInputData
         {
             direction = _inputService.InputVectorDirectionMovement,
-            aimDirection = _inputService.InputVectorDirectionAim
+            aimDirection = _inputService.InputVectorDirectionAim,
+            isShooting = _inputService.IsShooting
         };
 
         input.Set(data);
@@ -50,10 +51,10 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
 
-        gameObject.AddComponent<RunnerSimulatePhysics3D>();
+        gameObject.AddComponent<RunnerSimulatePhysics2D>();
 
-        var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
-        var sceneInfo = new NetworkSceneInfo();
+        SceneRef scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+        NetworkSceneInfo sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
         {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);

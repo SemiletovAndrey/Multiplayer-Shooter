@@ -5,9 +5,12 @@ public class NetworkCharacterController2D : NetworkBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private Transform _visualObject;
+    [SerializeField] private PlayerAnimation _playerAnimation;
     private Rigidbody2D _rigidbody2D;
 
     [Networked, OnChangedRender(nameof(UpdateDirection))] private bool IsFacingLeft { get; set; }
+
+    [Networked, OnChangedRender(nameof(OnIsRunningChanged))] private bool IsRunning { get; set; }
 
     void Awake()
     {
@@ -19,12 +22,18 @@ public class NetworkCharacterController2D : NetworkBehaviour
         _visualObject.localScale = new Vector3(IsFacingLeft ? -1 : 1, 1, 1);
     }
 
+    private void OnIsRunningChanged()
+    {
+        _playerAnimation.SetRunning(IsRunning);
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData data))
         {
             MovementPlayer(data);
             DirectionMovementPlayer(data);
+            IsRunning = data.direction.magnitude > 0.01f;
         }
     }
 

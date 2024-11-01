@@ -5,11 +5,7 @@ public class Bullet : NetworkBehaviour
 {
     [SerializeField] private float _speed = 10f;
     private float _lifetime = 5f;
-
-    private void Start()
-    {
-        Destroy(gameObject, _lifetime);
-    }
+    private float _timeAlive = 0f;
 
     public void Initialize(Vector2 direction)
     {
@@ -19,6 +15,20 @@ public class Bullet : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        transform.position += transform.forward * _speed * Runner.DeltaTime;
+        _timeAlive += Runner.DeltaTime;
+
+        if (_timeAlive >= _lifetime)
+        {
+            if (Object.HasStateAuthority)
+            {
+                Runner.Despawn(Object);
+            }
+            return;
+        }
+
+        if (Object.HasStateAuthority)
+        {
+            transform.position += transform.right * _speed * Runner.DeltaTime;
+        }
     }
 }

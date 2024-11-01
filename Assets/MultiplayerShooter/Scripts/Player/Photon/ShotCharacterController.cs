@@ -5,12 +5,11 @@ using UnityEngine;
 
 public class ShotCharacterController : NetworkBehaviour
 {
-    [SerializeField] private GameObject _bulletPrefab;
+    [SerializeField] private NetworkPrefabRef _bulletPrefab;
     [SerializeField] private Transform _shootPoint;
     [SerializeField] private Transform _weaponTransform;
 
     [Networked, OnChangedRender(nameof(UpdateWeaponRotation))] private float AimAngle { get; set; }
-
 
     public override void FixedUpdateNetwork()
     {
@@ -43,11 +42,26 @@ public class ShotCharacterController : NetworkBehaviour
         _weaponTransform.localScale = new Vector3(1, isAimingLeft ? -1 : 1, 1);
     }
 
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RpcRequestShoot(Vector3 position, float angle)
+    {
+        if (Runner.IsServer)
+        {
+            NetworkObject bullet = Runner.Spawn(_bulletPrefab, position, Quaternion.Euler(0, 0, angle));
+            Bullet bulletScript = bullet.GetComponent<Bullet>();
+            bulletScript.Initialize(new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)));
+        }
+    }
+
     private void Shoot()
     {
-        NetworkObject bullet = Runner.Spawn(_bulletPrefab, _shootPoint.position, Quaternion.identity);
+        Vector3 position = _shootPoint.position;
+        float angle = AimAngle;
 
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
-        bulletScript.Initialize(new Vector2(Mathf.Cos(AimAngle * Mathf.Deg2Rad), Mathf.Sin(AimAngle * Mathf.Deg2Rad)));
+        if (HasInputAuthority)
+        {
+            RpcRequestShoot(position, angle);
+        }
+        
     }
-}
+}   

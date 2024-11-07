@@ -109,7 +109,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: AnimControllerFarmer
+  m_Name: AnimControllerFarmer1
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: RunTrigger

@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
-public class PlayerAnimation : MonoBehaviour
+public class PlayerAnimation : NetworkBehaviour
 {
-    [SerializeField] private Animator _animator;
+    public Animator Animator;
 
     private static readonly int RunHash = Animator.StringToHash("IsRunner");
     private static readonly int StandHash = Animator.StringToHash("StandTrigger");
     private static readonly int DieHash = Animator.StringToHash("DieTrigger");
     private static readonly int ResurrectionHash = Animator.StringToHash("ResurrectionTrigger");
 
-    public void SetRunning(bool isRunning) => _animator.SetBool(RunHash, isRunning);
-    public void PlayStand() => _animator.SetTrigger(StandHash);
-    public void PlayDie() => _animator.SetTrigger(DieHash);
-    public void PlayResurrection() => _animator.SetTrigger(ResurrectionHash);
+    public void SetRunning(bool isRunning) => Animator.SetBool(RunHash, isRunning);
+    public void PlayStand() => Animator.SetTrigger(StandHash);
+    public void PlayDie() => Animator.SetTrigger(DieHash);
+    public void PlayResurrection() => Animator.SetTrigger(ResurrectionHash);
 }

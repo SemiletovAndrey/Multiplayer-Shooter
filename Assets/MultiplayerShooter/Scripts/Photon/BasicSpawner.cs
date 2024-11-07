@@ -17,7 +17,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private GameObject _cameraPrefab;
+
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+
+    private List<int> _indexWeapons = new List<int>() { 0,1,2};
+
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
@@ -91,7 +95,16 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             NetworkObject networkPlayer = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+
+            PlayerFacade playerFacade = networkPlayer.GetComponent<PlayerFacade>();
+            //networkPlayer.GetComponent<PlayerData>().SetWeapon(assignedWeapon);
+
+            int indexWeapon = UnityEngine.Random.Range(0, _indexWeapons.Count);
+            playerFacade.SetWeapon(_indexWeapons[indexWeapon]);
+            _indexWeapons.RemoveAt(indexWeapon);
+
             _spawnedCharacters.Add(player, networkPlayer);
+
         }
     }
 

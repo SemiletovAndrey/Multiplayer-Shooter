@@ -9,7 +9,6 @@ public class RangedEnemy : Enemy
     [SerializeField] protected Transform ShootPoint;
 
     [SerializeField] protected float ProjectileLifeTime = 2.0f;
-    [SerializeField] protected int Damage = 5;
     [SerializeField] protected int ProjectilePerShot = 1;
 
     protected override void Attack()
@@ -21,11 +20,11 @@ public class RangedEnemy : Enemy
             Vector2 direction = (PlayerTransform.position - ShootPoint.position).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-            SpawnBullet(angle);
+            SpawnProjectile(angle);
         }
     }
 
-    protected virtual void SpawnBullet(float angle)
+    protected virtual void SpawnProjectile(float angle)
     {
         Vector3 position = ShootPoint.position;
         if (Runner.IsServer)

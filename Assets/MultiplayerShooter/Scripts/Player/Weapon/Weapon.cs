@@ -57,7 +57,6 @@ public abstract class Weapon : NetworkBehaviour
 
     private bool CanShoot()
     {
-        // Проверяем, прошло ли время перезарядки
         return Time.time >= _lastShootTime + shootCooldown;
     }
 

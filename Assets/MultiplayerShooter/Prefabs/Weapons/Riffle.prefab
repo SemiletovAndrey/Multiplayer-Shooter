@@ -106,7 +106,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 11
   m_Sprite: {fileID: -144335857, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -134,7 +134,7 @@ MonoBehaviour:
     RawGuidValue: bf7ac3e1f9628184b97984b86cb658ca
   ShootPoint: {fileID: 8912926224455239852}
   bulletLifetime: 2
-  damage: 10
+  damage: 8
   bulletsPerShot: 1
   maxAmmo: 45
   shootCooldown: 0.5

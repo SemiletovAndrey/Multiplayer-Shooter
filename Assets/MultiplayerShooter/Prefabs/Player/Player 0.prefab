@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 10
   m_Sprite: {fileID: -1442216141, guid: 8f7a60065e3984c489b9c4d41bc3dc4e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -201,7 +201,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 10
   m_Sprite: {fileID: 938132271, guid: 57a1443e67528144aa07582927559650, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -379,7 +379,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 10
   m_Sprite: {fileID: -150523396, guid: 0c187a32c5bde4747be8d00770b07403, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -701,6 +701,7 @@ GameObject:
   - component: {fileID: 8787997945348499630}
   - component: {fileID: 371879465816811901}
   - component: {fileID: 8915697373232841039}
+  - component: {fileID: -8762801594301148061}
   m_Layer: 7
   m_Name: Player 0
   m_TagString: Untagged
@@ -909,10 +910,12 @@ MonoBehaviour:
   - {fileID: 3551633488353166455}
   - {fileID: 3884624574223943478}
   _playerAnimation: {fileID: 1006608463937622521}
+  _playerDeath: {fileID: -8762801594301148061}
   _Nickname: 
   _HP: 0
   _Kills: 0
   _ActiveSkinIndex: 0
+  _IsAlive: 0
   _ActiveWeapon: {fileID: 0}
 --- !u!114 &371879465816811901
 MonoBehaviour:
@@ -942,6 +945,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponHandler: {fileID: 7473383666589334887}
   _playerData: {fileID: 8787997945348499630}
+  _shotCharacterController: {fileID: 371879465816811901}
+--- !u!114 &-8762801594301148061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777956050134605895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a48b5298e2bf04d803d6198a57be4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _weaponTransform: {fileID: 1446647274652133529}
+  _controller2D: {fileID: 3118939603342420652}
   _shotCharacterController: {fileID: 371879465816811901}
 --- !u!1 &8018449853226647264
 GameObject:
@@ -1137,7 +1155,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 10
   m_Sprite: {fileID: 978012912, guid: 99a24620d31e5ce4e823c32d11e17c2c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

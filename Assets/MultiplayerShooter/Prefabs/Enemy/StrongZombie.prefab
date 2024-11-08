@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hp: 20
-  AttackPower: 5
+  Damage: 6
   Speed: 0.6
   TimeAttackSpeed: 2
   AttackRange: 1

@@ -6,9 +6,9 @@ public class Bullet : NetworkBehaviour
     [SerializeField] private float _speed = 10f;
     private float _lifetime = 5f;
     private float _timeAlive = 0f;
-    private float _damage;
+    private int _damage;
 
-    public void Initialize(Vector2 direction,float damage ,float lifeTime )
+    public void Initialize(Vector2 direction, int damage, float lifeTime)
     {
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         rb.velocity = direction.normalized * _speed;
@@ -35,5 +35,15 @@ public class Bullet : NetworkBehaviour
         }
     }
 
-    //TO DO Logic Damage
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        {
+            if (collision.TryGetComponent<Enemy>(out Enemy enemy))
+            {
+                enemy.TakeDamage(_damage);
+            }
+            Runner.Despawn(Object);
+        }
+    }
 }

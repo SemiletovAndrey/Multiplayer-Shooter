@@ -10,7 +10,22 @@ public class MeleeEnemy : Enemy
     protected override void Attack()
     {
         base.Attack();
-        
+
+        if (PlayerTransform.gameObject.TryGetComponent<PlayerData>(out PlayerData data))
+        {
+            Debug.Log($"IsAlive {data.IsAlive}");
+            if (data.IsAlive)
+            {
+                Debug.Log("Attack");
+                data.TakeDamage(Damage);
+            }
+            else
+            {
+                PlayerTransform = null;
+                Debug.Log($"PlayerTransform {PlayerTransform}");
+            }
+        }
+
     }
 
     private void UpdateAttackLogic()
@@ -23,7 +38,6 @@ public class MeleeEnemy : Enemy
 
             if (timeInRange >= timeToDealDamage && AttackCooldown <= 0)
             {
-                Debug.Log("TakeDamagePlayer");
                 Attack();
                 AttackCooldown = TimeAttackSpeed;
                 timeInRange = 0.0f;
@@ -37,15 +51,17 @@ public class MeleeEnemy : Enemy
 
     public override void FixedUpdateNetwork()
     {
-        MoveTowardsPlayer();
-
-        if (AttackCooldown > 0)
+        if (!IsDead)
         {
-            AttackCooldown -= Runner.DeltaTime;
-        }
-        else if (IsStand)
-        {
-            UpdateAttackLogic();
+            MoveTowardsPlayer();
+            if (AttackCooldown > 0)
+            {
+                AttackCooldown -= Runner.DeltaTime;
+            }
+            else if (IsStand)
+            {
+                UpdateAttackLogic();
+            }
         }
     }
 }

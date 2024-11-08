@@ -1,6 +1,4 @@
 using Fusion;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerFacade : NetworkBehaviour
@@ -28,7 +26,10 @@ public class PlayerFacade : NetworkBehaviour
     private void UpdateWeapon()
     {
         if (_weaponHandler == null || _playerData == null || _shotCharacterController == null)
+        {
+            Debug.LogError("NULL");
             return;
+        }
 
         _weaponHandler.SetWeaponOnIndex(currentWeaponIndex);
         _playerData.ActiveWeapon = _weaponHandler.GetWeaponOnIndex(currentWeaponIndex);

@@ -123,8 +123,8 @@ MonoBehaviour:
   TotalWords: 1
   ApplyTiming: 2
   SyncSettings: 79
-  StateHashes: 00000000e723af300941674566a10b3a88c3c34fc8254f48d522880f
-  TriggerHashes: 00000000a1609f62
+  StateHashes: 00000000e723af300941674566a10b3a88c3c34fc8254f48d522880f89dca0cd5777e1ae
+  TriggerHashes: 00000000086e87fe
 --- !u!1001 &2836833148600489971
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -133,16 +133,28 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5312436626306389648, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+      propertyPath: Animator
+      value: 
+      objectReference: {fileID: 5319014397228609838}
     - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: SortKey
       value: 2190710914
       objectReference: {fileID: 0}
     - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: NetworkedBehaviours.Array.size
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: NetworkedBehaviours.Array.data[1]
+      value: 
+      objectReference: {fileID: 1231765005244382851}
+    - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[2]
+      value: 
+      objectReference: {fileID: -2721080268614837459}
+    - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[3]
       value: 
       objectReference: {fileID: 2465916465731822926}
     - target: {fileID: 5408702345570542555, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
@@ -187,7 +199,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5487785388827682521, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: m_GravityScale
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7531614164236249168, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: m_Name
@@ -199,8 +211,47 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5408702345570542555, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1435955236294499369}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7531614164236249168, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2721080268614837459}
   m_SourcePrefab: {fileID: 100100000, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+--- !u!114 &1231765005244382851 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -5312436626306389648, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+  m_PrefabInstance: {fileID: 2836833148600489971}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754438803326025635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baf8a193128057b49b0abd972de5969f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &5754438803326025635 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7531614164236249168, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+  m_PrefabInstance: {fileID: 2836833148600489971}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-2721080268614837459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754438803326025635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca4bdaa6373aa9943b2bf22510464deb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Hp: 10
+  AttackPower: 2
+  Speed: 1
+  TimeAttackSpeed: 1
+  AttackRange: 1
+  _visualObject: {fileID: 1435955236294499369}
+  EnemyAnimation: {fileID: 1231765005244382851}
+  timeToDealDamage: 0.5
 --- !u!4 &7805273168090723368 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5408702345570542555, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}

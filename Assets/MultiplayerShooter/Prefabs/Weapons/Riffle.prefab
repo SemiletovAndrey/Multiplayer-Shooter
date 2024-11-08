@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 757204012452875181}
   - component: {fileID: 8133322817890126052}
   - component: {fileID: 3749029271557361838}
+  - component: {fileID: 6577694074573191886}
   m_Layer: 7
   m_Name: Riffle
   m_TagString: Untagged
@@ -129,10 +130,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 801f7ec6dfad3b14f9e167362e686d6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bulletPrefab:
+  BulletPrefab:
     RawGuidValue: bf7ac3e1f9628184b97984b86cb658ca
-  _shootPoint: {fileID: 8912926224455239852}
+  ShootPoint: {fileID: 8912926224455239852}
   bulletLifetime: 2
   damage: 10
   bulletsPerShot: 1
-  maxAmmo: 10
+  maxAmmo: 45
+  shootCooldown: 0.5
+--- !u!114 &6577694074573191886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7700345548987669797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 2322999261
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 3749029271557361838}

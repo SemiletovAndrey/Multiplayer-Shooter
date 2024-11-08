@@ -1,22 +1,35 @@
 using Fusion;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponHandler : NetworkBehaviour
 {
-    [SerializeField] private GameObject[] _weapons;
+    [SerializeField] private List<GameObject> _weapons;
 
-    public int WeaponCount => _weapons.Length;
+    public int WeaponCount => _weapons.Count;
 
     public void SetWeaponOnIndex(int index)
     {
-        for (int i = 0; i < _weapons.Length; i++)
+        for (int i = 0; i < _weapons.Count; i++)
         {
-            _weapons[i].SetActive(i == index);
+            if (i == index)
+            {
+                _weapons[i].SetActive(true);
+            }
+            else
+            {
+                _weapons[i].SetActive(false);
+            }
         }
     }
 
     public Weapon GetWeaponOnIndex(int index)
     {
-        return _weapons[index].GetComponent<Weapon>();
+        Weapon weapon = _weapons[index].GetComponent<Weapon>();
+        if (weapon == null)
+        {
+            Debug.LogError($"Weapon at index {index} does not have a Weapon component attached!");
+        }
+        return weapon;
     }
 }

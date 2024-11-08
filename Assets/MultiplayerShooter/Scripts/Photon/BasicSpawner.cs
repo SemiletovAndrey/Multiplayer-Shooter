@@ -20,7 +20,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
-    private List<int> _indexWeapons = new List<int>() { 0,1,2};
+    private List<int> _indexWeapons = new List<int>() { 0, 1, 2 };
 
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -91,20 +91,19 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        if (runner.IsServer)
+        if (runner.IsServer && !_spawnedCharacters.ContainsKey(player))
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             NetworkObject networkPlayer = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
 
             PlayerFacade playerFacade = networkPlayer.GetComponent<PlayerFacade>();
-            //networkPlayer.GetComponent<PlayerData>().SetWeapon(assignedWeapon);
 
-            int indexWeapon = UnityEngine.Random.Range(0, _indexWeapons.Count);
+            int indexWeapon = UnityEngine.Random.Range(1, _indexWeapons.Count);
+            Debug.LogError($"Index weapon {indexWeapon}");
             playerFacade.SetWeapon(_indexWeapons[indexWeapon]);
             _indexWeapons.RemoveAt(indexWeapon);
 
             _spawnedCharacters.Add(player, networkPlayer);
-
         }
     }
 

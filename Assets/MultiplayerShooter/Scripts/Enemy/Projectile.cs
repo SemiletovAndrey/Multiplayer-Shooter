@@ -1,14 +1,16 @@
 using Fusion;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : NetworkBehaviour
+public class Projectile : NetworkBehaviour
 {
     [SerializeField] private float _speed = 10f;
     private float _lifetime = 5f;
     private float _timeAlive = 0f;
     private float _damage;
 
-    public void Initialize(Vector2 direction,float damage ,float lifeTime )
+    public void Initialize(Vector2 direction, float damage, float lifeTime)
     {
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         rb.velocity = direction.normalized * _speed;

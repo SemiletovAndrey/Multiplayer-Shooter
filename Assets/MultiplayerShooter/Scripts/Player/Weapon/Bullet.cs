@@ -42,8 +42,8 @@ public class Bullet : NetworkBehaviour
             if (collision.TryGetComponent<Enemy>(out Enemy enemy))
             {
                 enemy.TakeDamage(_damage);
+                Runner.Despawn(Object);
             }
-            Runner.Despawn(Object);
         }
     }
 }

@@ -204,6 +204,10 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: 0.020844042
       objectReference: {fileID: 0}
+    - target: {fileID: 4733415543663867495, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+      propertyPath: _interpolationTarget
+      value: 
+      objectReference: {fileID: 6947547352422655762}
     - target: {fileID: 5408702345570542555, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -304,14 +308,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hp: 15
-  AttackPower: 3
+  Damage: 5
   Speed: 1
-  AttackSpeed: 4
+  TimeAttackSpeed: 4
   AttackRange: 5.5
   _visualObject: {fileID: 6947547352422655762}
   EnemyAnimation: {fileID: 3910838171356401404}
   ProjectilePrefab: {fileID: 25526579519358296, guid: 941fde8d5ca69e041aa33da3f1ad079c, type: 3}
   ShootPoint: {fileID: 2595671309523822631}
   ProjectileLifeTime: 2
-  Damage: 5
   ProjectilePerShot: 1

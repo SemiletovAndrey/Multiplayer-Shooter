@@ -157,6 +157,10 @@ PrefabInstance:
       propertyPath: NetworkedBehaviours.Array.data[3]
       value: 
       objectReference: {fileID: 5801100260425562815}
+    - target: {fileID: 4733415543663867495, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
+      propertyPath: _interpolationTarget
+      value: 
+      objectReference: {fileID: 7608976715905806936}
     - target: {fileID: 5408702345570542555, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

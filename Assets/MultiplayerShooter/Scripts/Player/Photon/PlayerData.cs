@@ -1,4 +1,5 @@
 using Fusion;
+using System;
 using UnityEngine;
 using Zenject;
 
@@ -9,16 +10,13 @@ public class PlayerData : NetworkBehaviour
     [SerializeField] private PlayerDeath _playerDeath;
 
     [Networked] public string Nickname { get; set; }
-
     [Networked] public int HP { get; set; }
-
     [Networked] public int Kills { get; set; }
-
     [Networked] public int ActiveSkinIndex { get; set; }
-    [Networked] public bool IsAlive { get; set; }
-
+    [Networked,OnChangedRender(nameof(OnIsAliveChanged))] public bool IsAlive { get; set; }
     [Networked] public Weapon ActiveWeapon { get; set; }
 
+    public static event Action<PlayerRef> OnPlayerDeath;
 
     public override void Spawned()
     {
@@ -28,7 +26,7 @@ public class PlayerData : NetworkBehaviour
         {
             HP = 15;
             Kills = 0;
-            int randomIndexCharacter = Random.Range(0, 3);
+            int randomIndexCharacter = UnityEngine.Random.Range(0, 3);
             ActiveSkinIndex = randomIndexCharacter;
             IsAlive = true;
         }
@@ -37,6 +35,8 @@ public class PlayerData : NetworkBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (!IsAlive) return;
+
         HP -= damage;
         if (HP <= 0)
         {
@@ -46,10 +46,26 @@ public class PlayerData : NetworkBehaviour
 
     private void Die()
     {
-        // TO DO Change camera
-        _playerDeath.Death();
-        _playerAnimation.PlayDie();
+        // TO DO Camera 
+        if (!Object.HasStateAuthority) return;
+
         IsAlive = false;
+
+        OnPlayerDeath?.Invoke(Object.InputAuthority);
+    }
+
+    private void OnIsAliveChanged()
+    {
+        HandleDeath(); 
+    }
+
+    private void HandleDeath()
+    {
+        if (!IsAlive)
+        {
+            _playerDeath.Death();
+            _playerAnimation.PlayDie();
+        }
     }
 
     public void SetActiveSkin(int skinIndex)

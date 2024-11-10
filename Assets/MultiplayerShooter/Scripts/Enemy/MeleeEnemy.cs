@@ -39,6 +39,7 @@ public class MeleeEnemy : Enemy
             if (timeInRange >= timeToDealDamage && AttackCooldown <= 0)
             {
                 Attack();
+                IsAttacking = true;
                 AttackCooldown = TimeAttackSpeed;
                 timeInRange = 0.0f;
             }

@@ -4,10 +4,12 @@ using UnityEngine;
 using Fusion;
 public abstract class Enemy : NetworkBehaviour
 {
+    [SerializeField] protected float TimeShowDeathAnimation = 10f;
     [SerializeField] protected float Hp;
     [SerializeField] protected int Damage;
     [SerializeField] protected float Speed;
     [SerializeField] protected float TimeAttackSpeed;
+    [SerializeField] protected float TimeAttack;
     [SerializeField] protected float AttackRange;
     [SerializeField] private Transform _visualObject;
     [SerializeField] protected EnemyAnimation EnemyAnimation;
@@ -20,12 +22,21 @@ public abstract class Enemy : NetworkBehaviour
     [Networked, OnChangedRender(nameof(OnIsRunningChanged))] protected bool IsRunning { get; set; }
     [Networked, OnChangedRender(nameof(OnIsStandChanged))] protected bool IsStand { get; set; }
     [Networked, OnChangedRender(nameof(OnIsAlive))] protected bool IsDead { get; set; }
+    [Networked, OnChangedRender(nameof(OnAttackChanged))] protected bool IsAttacking { get; set; }
 
     [Networked] protected float AttackCooldown { get; set; }
 
     public virtual void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
+    }
+
+    public override void Spawned()
+    {
+        if (Object.HasStateAuthority)
+        {
+            UpdateFacingDirection();
+        }
     }
 
     public void Initialize(Transform playerTransform)
@@ -47,6 +58,7 @@ public abstract class Enemy : NetworkBehaviour
             {
                 CheckAttack();
             }
+            UpdateFacingDirection();
         }
     }
 
@@ -59,12 +71,13 @@ public abstract class Enemy : NetworkBehaviour
         }
     }
 
+    public void UpdateTarget(Transform newTarget)
+    {
+        PlayerTransform = newTarget;
+    }
+
     protected void MoveTowardsPlayer()
     {
-        //TO DO 
-
-        PlayerTransform = FindObjectOfType<PlayerFacade>()?.transform;
-
         if (PlayerTransform == null)
         {
             IsStand = false;
@@ -101,14 +114,31 @@ public abstract class Enemy : NetworkBehaviour
 
         if (Vector2.Distance(transform.position, PlayerTransform.position) <= AttackRange && AttackCooldown <= 0)
         {
+            IsAttacking = true;
             Attack();
             AttackCooldown = TimeAttackSpeed;
         }
     }
 
+    private void OnAttackChanged()
+    {
+        if (IsAttacking)
+        {
+            EnemyAnimation.PlayHit();
+            StartCoroutine(EndAttackCoroutine());
+            Debug.Log("On Attack Change");
+        }
+    }
+
     protected virtual void Attack()
     {
-        EnemyAnimation.PlayHit();
+        //EnemyAnimation.PlayHit();
+    }
+
+    private IEnumerator EndAttackCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        IsAttacking = false;
     }
 
     protected virtual void Die()
@@ -128,7 +158,7 @@ public abstract class Enemy : NetworkBehaviour
     {
         EnemyAnimation.SetRunning(IsRunning);
     }
-    
+
     private void OnIsStandChanged()
     {
         EnemyAnimation.SetStand(IsStand);
@@ -152,8 +182,24 @@ public abstract class Enemy : NetworkBehaviour
 
     private IEnumerator DieCoroutine()
     {
-        yield return new WaitForSeconds(10f);
-        Runner.Despawn(Object);
+        yield return new WaitForSeconds(TimeShowDeathAnimation);
+        if (Runner != null && Object != null)
+        {
+            Runner.Despawn(Object);
+        }
+        else
+        {
+            Debug.LogWarning("Runner or Object is null in DieCoroutine.");
+        }
+    }
+
+    private void UpdateFacingDirection()
+    {
+        if (PlayerTransform != null)
+        {
+            IsFacingLeft = PlayerTransform.position.x < transform.position.x;
+            UpdateDirection();
+        }
     }
 
 }

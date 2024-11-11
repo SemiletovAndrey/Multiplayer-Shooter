@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using System;
 
 public abstract class Weapon : NetworkBehaviour
 {
     [SerializeField] protected NetworkPrefabRef BulletPrefab;
     [SerializeField] protected Transform ShootPoint;
+    [SerializeField] protected PlayerData PlayerData;
 
     [SerializeField] protected float bulletLifetime = 2.0f;
     [SerializeField] protected int damage = 10;
@@ -15,28 +17,42 @@ public abstract class Weapon : NetworkBehaviour
     [SerializeField] protected float shootCooldown = 1f;
 
     private float _lastShootTime = 0f;
+    private int _currentAmmo;
+    public event Action<int, int> OnAmmoChanged;
 
-    [Networked] protected int _currentAmmo { get; set; }
+
+    [Networked] protected int CurrentAmmo
+    {
+        get => _currentAmmo;
+        set
+        {
+            if (_currentAmmo != value)
+            {
+                _currentAmmo = value;
+                OnAmmoChanged?.Invoke(_currentAmmo, maxAmmo);  // Вызываем событие обновления боезапаса
+            }
+        }
+    }
 
     public override void Spawned()
     {
         if (Object.HasStateAuthority)
         {
-            _currentAmmo = maxAmmo;
+            CurrentAmmo = maxAmmo;
         }
     }
 
     public float BulletLifetime => bulletLifetime;
     public int Damage => damage;
     public int BulletsPerShot => bulletsPerShot;
-    public int Ammo => _currentAmmo;
+    public int Ammo => CurrentAmmo;
     public int MaxAmmo => maxAmmo;
 
     public virtual void Shoot(float aimAngle)
     {
         if (!Object.HasStateAuthority) return;
 
-        if (_currentAmmo <= 0)
+        if (CurrentAmmo <= 0)
         {
             Debug.Log("Out of ammo!");
             return;
@@ -44,7 +60,7 @@ public abstract class Weapon : NetworkBehaviour
 
         if (CanShoot())
         {
-            _currentAmmo -= BulletsPerShot;
+            CurrentAmmo -= BulletsPerShot;
 
             for (int i = 0; i < bulletsPerShot; i++)
             {
@@ -72,7 +88,8 @@ public abstract class Weapon : NetworkBehaviour
         {
             NetworkObject bullet = Runner.Spawn(BulletPrefab, position, Quaternion.Euler(0, 0, angle));
             Bullet bulletScript = bullet.GetComponent<Bullet>();
-            bulletScript.Initialize(new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)), Damage, BulletLifetime);
+            bulletScript.Initialize(new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)),
+                Damage, BulletLifetime, PlayerData);
         }
     }
 }

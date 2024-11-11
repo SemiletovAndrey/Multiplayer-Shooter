@@ -12,6 +12,7 @@ public class EnemySpawner : NetworkBehaviour
     private List<GameObject> _enemyTypes;
     private Coroutine _spawnCoroutine;
 
+    private List<Enemy> _enemies = new List<Enemy>();
 
     private Dictionary<PlayerRef, NetworkObject> _playerObjects;
 
@@ -34,40 +35,12 @@ public class EnemySpawner : NetworkBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        PlayerData.OnPlayerDeath += HandlePlayerDeath;
-    }
-
-    private void OnDisable()
-    {
-        PlayerData.OnPlayerDeath -= HandlePlayerDeath;
-    }
-
     public void StopSpawning()
     {
         if (_spawnCoroutine != null)
         {
             StopCoroutine(_spawnCoroutine);
             _spawnCoroutine = null;
-        }
-    }
-
-    private void HandlePlayerDeath(PlayerRef playerRef)
-    {
-        if (_playerObjects.ContainsKey(playerRef))
-        {
-            _playerObjects.Remove(playerRef);
-
-            UpdateEnemyTargets();
-        }
-    }
-
-    private void UpdateEnemyTargets()
-    {
-        foreach (var enemy in FindObjectsOfType<Enemy>())
-        {
-            enemy.UpdateTarget(GetRandomPlayerTransform());
         }
     }
 
@@ -82,7 +55,6 @@ public class EnemySpawner : NetworkBehaviour
 
     private void SpawnEnemy()
     {
-        if (_playerObjects == null || _playerObjects.Count == 0) return;
 
         var playerTransform = GetRandomPlayerTransform();
         Vector2 spawnPosition = (Vector2)playerTransform.position + Random.insideUnitCircle * spawnRadius;
@@ -93,7 +65,10 @@ public class EnemySpawner : NetworkBehaviour
         if (Runner.IsServer)
         {
             NetworkObject enemyObject = Runner.Spawn(enemyPrefab, spawnPosition, Quaternion.identity);
-            enemyObject.GetComponent<Enemy>().Initialize(playerTransform);
+            Enemy enemy = enemyObject.GetComponent<Enemy>();
+
+            _enemies.Add(enemy);
+
         }
     }
 

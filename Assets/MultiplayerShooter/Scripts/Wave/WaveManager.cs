@@ -18,7 +18,6 @@ public class WaveManager : NetworkBehaviour
         }
     }
 
-
     private IEnumerator StartWaves()
     {
         while (currentWaveIndex < waves.Count)
@@ -35,5 +34,15 @@ public class WaveManager : NetworkBehaviour
         }
 
         Debug.Log("All waves completed!");
+    }
+
+    public float GetWaveTimer()
+    {
+        if (currentWaveIndex < waves.Count)
+        {
+            WaveConfig currentWave = waves[currentWaveIndex];
+            return Mathf.Max(0, currentWave.WaveDuration - (Time.time));
+        }
+        return 0;
     }
 }

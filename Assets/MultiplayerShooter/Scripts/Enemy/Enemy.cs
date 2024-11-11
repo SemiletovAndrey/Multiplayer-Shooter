@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using System;
+
 public abstract class Enemy : NetworkBehaviour
 {
     [SerializeField] protected float TimeShowDeathAnimation = 10f;
@@ -13,6 +15,7 @@ public abstract class Enemy : NetworkBehaviour
     [SerializeField] protected float AttackRange;
     [SerializeField] private Transform _visualObject;
     [SerializeField] protected EnemyAnimation EnemyAnimation;
+    [SerializeField] private float detectionRadius = 10f;
 
     protected Transform PlayerTransform;
 
@@ -21,10 +24,14 @@ public abstract class Enemy : NetworkBehaviour
     [Networked, OnChangedRender(nameof(UpdateDirection))] protected bool IsFacingLeft { get; set; }
     [Networked, OnChangedRender(nameof(OnIsRunningChanged))] protected bool IsRunning { get; set; }
     [Networked, OnChangedRender(nameof(OnIsStandChanged))] protected bool IsStand { get; set; }
-    [Networked, OnChangedRender(nameof(OnIsAlive))] protected bool IsDead { get; set; }
+    [Networked, OnChangedRender(nameof(OnIsAlive))] public bool IsDead { get; set; }
     [Networked, OnChangedRender(nameof(OnAttackChanged))] protected bool IsAttacking { get; set; }
 
     [Networked] protected float AttackCooldown { get; set; }
+
+    private PhysicsScene2D _physicsScene;
+
+    private bool prevIsFaceLeft;
 
     public virtual void Start()
     {
@@ -35,21 +42,18 @@ public abstract class Enemy : NetworkBehaviour
     {
         if (Object.HasStateAuthority)
         {
-            UpdateFacingDirection();
+            _physicsScene = Runner.GetPhysicsScene2D();
+            prevIsFaceLeft = true;
         }
-    }
-
-    public void Initialize(Transform playerTransform)
-    {
-        PlayerTransform = playerTransform;
     }
 
     public override void FixedUpdateNetwork()
     {
         if (!IsDead)
         {
+            FindClosestPlayer();
             MoveTowardsPlayer();
-
+            UpdateFacingDirection();
             if (AttackCooldown > 0)
             {
                 AttackCooldown -= Runner.DeltaTime;
@@ -58,22 +62,41 @@ public abstract class Enemy : NetworkBehaviour
             {
                 CheckAttack();
             }
-            UpdateFacingDirection();
         }
     }
 
-    public void TakeDamage(int damage)
+    protected void FindClosestPlayer()
+    {
+        if (PlayerTransform != null) return;
+        int playerLayer = 1 << LayerMask.NameToLayer("Player");
+        Collider2D hitColliders = _physicsScene.OverlapCircle(transform.position, detectionRadius, playerLayer);
+
+        if (hitColliders == null)
+        {
+            Debug.Log("No players found in detection range.");
+
+            return;
+        }
+
+        Transform closestPlayer = null;
+        closestPlayer = hitColliders.transform;
+
+        if (closestPlayer != null)
+        {
+            PlayerTransform = closestPlayer;
+            Debug.Log("Found closest player: " + closestPlayer.name);
+        }
+    }
+
+
+    public void TakeDamage(int damage, PlayerData playerData)
     {
         Hp -= damage;
         if (Hp <= 0)
         {
             Die();
+            playerData.IncreaseKillCount();
         }
-    }
-
-    public void UpdateTarget(Transform newTarget)
-    {
-        PlayerTransform = newTarget;
     }
 
     protected void MoveTowardsPlayer()
@@ -87,7 +110,12 @@ public abstract class Enemy : NetworkBehaviour
 
         Vector2 direction = (PlayerTransform.position - transform.position).normalized;
         float distanceToPlayer = Vector2.Distance(transform.position, PlayerTransform.position);
-        DirectionEnemy(direction);
+
+        if (prevIsFaceLeft == DirectionEnemy(direction))
+        {
+            RpcSetFacingDirection(direction);
+        }
+
         if (distanceToPlayer > AttackRange)
         {
             Rigidbody2D.velocity = direction * Speed;
@@ -126,7 +154,6 @@ public abstract class Enemy : NetworkBehaviour
         {
             EnemyAnimation.PlayHit();
             StartCoroutine(EndAttackCoroutine());
-            Debug.Log("On Attack Change");
         }
     }
 
@@ -146,6 +173,7 @@ public abstract class Enemy : NetworkBehaviour
         IsDead = true;
         EnemyAnimation.SetDie(IsDead);
         GetComponent<Rigidbody2D>().simulated = false;
+
         StartCoroutine(DieCoroutine());
     }
 
@@ -168,16 +196,17 @@ public abstract class Enemy : NetworkBehaviour
         EnemyAnimation.SetDie(IsDead);
     }
 
-    private void DirectionEnemy(Vector2 direction)
+    private bool DirectionEnemy(Vector2 direction)
     {
-        if (direction.x < 0 && !IsFacingLeft)
+        if (direction.x < 0)
         {
-            IsFacingLeft = true;
+            return true;
         }
-        else if (direction.x > 0 && IsFacingLeft)
+        else if (direction.x > 0)
         {
-            IsFacingLeft = false;
+            return false;
         }
+        return false;
     }
 
     private IEnumerator DieCoroutine()
@@ -193,7 +222,7 @@ public abstract class Enemy : NetworkBehaviour
         }
     }
 
-    private void UpdateFacingDirection()
+    protected void UpdateFacingDirection()
     {
         if (PlayerTransform != null)
         {
@@ -202,4 +231,11 @@ public abstract class Enemy : NetworkBehaviour
         }
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RpcSetFacingDirection(Vector2 direction)
+    {
+        IsFacingLeft = DirectionEnemy(direction);
+        prevIsFaceLeft = IsFacingLeft;
+        UpdateDirection();
+    }
 }

@@ -17,7 +17,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private EnemySpawner _enemySpawner;
+
     [SerializeField] private GameObject _playerControllerUI;
+    [SerializeField] private PlayerInfoUI _playerInfoUI;
 
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
@@ -99,21 +101,27 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("OnPlayerJoined");
         if (runner.IsServer && !_spawnedCharacters.ContainsKey(player))
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             NetworkObject networkPlayer = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-
             playerFacade = networkPlayer.GetComponent<PlayerFacade>();
 
             int indexWeapon = UnityEngine.Random.Range(1, _indexWeapons.Count);
             playerFacade.SetWeapon(_indexWeapons[indexWeapon]);
             _indexWeapons.RemoveAt(indexWeapon);
 
+            //_playerInfoUI.InitializePlayerUI(playerFacade.GetComponent<PlayerData>());
+            
             _spawnedCharacters.Add(player, networkPlayer);
         }
-        _playerControllerUI.SetActive(true);
+        if (player == runner.LocalPlayer)
+        {
+            _playerInfoUI.InitializePlayerUI(playerFacade.GetComponent<PlayerData>());
+            _playerControllerUI.SetActive(true);
+            _playerInfoUI.gameObject.SetActive(true);
+        }
+
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)

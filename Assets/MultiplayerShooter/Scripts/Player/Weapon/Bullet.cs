@@ -7,13 +7,15 @@ public class Bullet : NetworkBehaviour
     private float _lifetime = 5f;
     private float _timeAlive = 0f;
     private int _damage;
+    private PlayerData _playerData;
 
-    public void Initialize(Vector2 direction, int damage, float lifeTime)
+    public void Initialize(Vector2 direction, int damage, float lifeTime, PlayerData playerData)
     {
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         rb.velocity = direction.normalized * _speed;
         _lifetime = lifeTime;
         _damage = damage;
+        _playerData = playerData;
     }
 
     public override void FixedUpdateNetwork()
@@ -41,8 +43,15 @@ public class Bullet : NetworkBehaviour
         {
             if (collision.TryGetComponent<Enemy>(out Enemy enemy))
             {
-                enemy.TakeDamage(_damage);
-                Runner.Despawn(Object);
+                if (!enemy.IsDead)
+                {
+                    enemy.TakeDamage(_damage, _playerData);
+                    if (_playerData != null)
+                    {
+                        _playerData.AddAllDamage(_damage);
+                    }
+                    Runner.Despawn(Object);
+                }
             }
         }
     }

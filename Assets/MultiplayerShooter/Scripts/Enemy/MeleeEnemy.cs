@@ -54,6 +54,7 @@ public class MeleeEnemy : Enemy
     {
         if (!IsDead)
         {
+            FindClosestPlayer();
             MoveTowardsPlayer();
             if (AttackCooldown > 0)
             {

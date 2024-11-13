@@ -43,8 +43,6 @@ public class WeaponPhotonManager : NetworkBehaviour, IPlayerLeft
 
     public void ReleaseWeaponIndex(PlayerRef player)
     {
-        
-            playerWeaponIndices.Remove(player);
-        
+        playerWeaponIndices.Remove(player);
     }
 }

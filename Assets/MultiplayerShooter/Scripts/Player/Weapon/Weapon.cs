@@ -70,6 +70,11 @@ public abstract class Weapon : NetworkBehaviour
         }
     }
 
+    public void AddAmmo(int ammo)
+    {
+        CurrentAmmo = Mathf.Clamp(CurrentAmmo + ammo, 0, MaxAmmo);
+    }
+
     private bool CanShoot()
     {
         return Time.time >= _lastShootTime + shootCooldown;

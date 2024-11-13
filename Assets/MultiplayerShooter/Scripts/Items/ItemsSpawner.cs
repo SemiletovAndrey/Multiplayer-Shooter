@@ -1,31 +1,33 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Fusion;
 using System.Linq;
-public class EnemySpawner : NetworkBehaviour
+using UnityEngine;
+
+public class ItemsSpawner : NetworkBehaviour
 {
     [SerializeField] private float _spawnRadius = 10f;
     [SerializeField] private float _minimalSpawnRadius;
     [SerializeField] private PlayerSpawner _playerSpawner;
 
-    private float _spawnInterval;
-    private List<GameObject> _enemyTypes;
+    private float _spawnIntervalMin;
+    private float _spawnIntervalMax;
+    private List<GameObject> _itemsType;
     private Coroutine _spawnCoroutine;
 
-    private List<Enemy> _enemies = new List<Enemy>();
+    private List<Item> _items = new List<Item>();
 
 
-    public void InitializeWave(float spawnInterval, List<GameObject> enemyTypes)
+    public void InitializeWave(float spawnIntervalMin,float spawnIntervalMax, List<GameObject> itemsType)
     {
-        _spawnInterval = spawnInterval;
-        _enemyTypes = enemyTypes;
+        _spawnIntervalMin = spawnIntervalMin;
+        _spawnIntervalMax = spawnIntervalMax;
+        _itemsType = itemsType;
 
-        Debug.Log($"Initializing wave with interval: {_spawnInterval} and enemy types count: {_enemyTypes?.Count}");
 
         if (Object.HasStateAuthority && _spawnCoroutine == null)
         {
-            _spawnCoroutine = StartCoroutine(SpawnEnemies());
+            _spawnCoroutine = StartCoroutine(Spawntems());
         }
     }
 
@@ -38,30 +40,30 @@ public class EnemySpawner : NetworkBehaviour
         }
     }
 
-    private IEnumerator SpawnEnemies()
+    private IEnumerator Spawntems()
     {
         while (true)
         {
-            yield return new WaitForSeconds(_spawnInterval);
-            SpawnEnemy();
+            yield return new WaitForSeconds(Random.Range(_spawnIntervalMin, _spawnIntervalMax));
+            SpawnItem();
         }
     }
 
-    private void SpawnEnemy()
+    private void SpawnItem()
     {
 
         var playerTransform = GetRandomPlayerTransform();
         Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
 
-        int randomEnemyIndex = Random.Range(0, _enemyTypes.Count);
-        GameObject enemyPrefab = _enemyTypes[randomEnemyIndex];
+        int randomEnemyIndex = Random.Range(0, _itemsType.Count);
+        GameObject enemyPrefab = _itemsType[randomEnemyIndex];
 
         if (Runner.IsServer)
         {
             NetworkObject enemyObject = Runner.Spawn(enemyPrefab, spawnPosition, Quaternion.identity);
-            Enemy enemy = enemyObject.GetComponent<Enemy>();
+            Item item = enemyObject.GetComponent<Item>();
 
-            _enemies.Add(enemy);
+            _items.Add(item);
 
         }
     }

@@ -16,7 +16,7 @@ public class UIPhotonManager : NetworkBehaviour
 
     private IEnumerator CheckPlayerSpawned()
     {
-        while (!_playerSpawner._spawnedCharacters.ContainsKey(Runner.LocalPlayer))
+        while (!_playerSpawner.SpawnedCharacters.ContainsKey(Runner.LocalPlayer))
         {
             yield return new WaitForSeconds(0.1f);
         }
@@ -27,20 +27,18 @@ public class UIPhotonManager : NetworkBehaviour
     [ContextMenu("Spawned check")]
     public void SpawnedContext()
     {
-        Debug.Log($"Spawned {_playerSpawner._spawnedCharacters[Runner.LocalPlayer]}");
         InitializeLocalPlayerUI(Runner.LocalPlayer);
     }
     private void InitializeLocalPlayerUI(PlayerRef player)
     {
-        if (_playerSpawner._spawnedCharacters.ContainsKey(player))
+        if (_playerSpawner.SpawnedCharacters.ContainsKey(player))
         {
-            NetworkObject localPlayer = _playerSpawner._spawnedCharacters[player];
+            NetworkObject localPlayer = _playerSpawner.SpawnedCharacters[player];
             PlayerData playerData = localPlayer.gameObject.GetComponent<PlayerData>();
 
             _playerInfoUI.InitializePlayerUI(playerData);
             _playerControllerUI.SetActive(true);
             _playerInfoUI.gameObject.SetActive(true);
-            Debug.Log("InitializeLocalPlayerUI");
         }
         else
         {

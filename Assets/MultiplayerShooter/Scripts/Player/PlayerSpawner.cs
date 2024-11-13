@@ -4,8 +4,9 @@ using UnityEngine;
 public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
 {
     [SerializeField] private NetworkPrefabRef _playerPrefab;
+    [SerializeField] private PlayerAliveManager _playerAliveManager;
  
-    [Networked] public NetworkDictionary<PlayerRef, NetworkObject> _spawnedCharacters => default;
+    [Networked] public NetworkDictionary<PlayerRef, NetworkObject> SpawnedCharacters => default;
 
     public void PlayerJoined(PlayerRef player)
     {
@@ -25,21 +26,22 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
 
     public void SpawnPlayer(PlayerRef player)
     {
-        if (!_spawnedCharacters.ContainsKey(player))
+        if (!SpawnedCharacters.ContainsKey(player))
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % Runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             NetworkObject networkPlayer = Runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-            _spawnedCharacters.Add(player, networkPlayer);
+            SpawnedCharacters.Add(player, networkPlayer);
+            _playerAliveManager.AddAliveCharacter(player, networkPlayer);
         }
     }
 
     public void OnPlayerLeft(PlayerRef player)
     {
-        if (_spawnedCharacters.ContainsKey(player))
+        if (SpawnedCharacters.ContainsKey(player))
         {
-            NetworkObject networkObject = _spawnedCharacters[player];
+            NetworkObject networkObject = SpawnedCharacters[player];
             Runner.Despawn(networkObject);
-            _spawnedCharacters.Remove(player);
+            SpawnedCharacters.Remove(player);
         }
     }
 }

@@ -13,19 +13,15 @@ public class MeleeEnemy : Enemy
 
         if (PlayerTransform.gameObject.TryGetComponent<PlayerData>(out PlayerData data))
         {
-            Debug.Log($"IsAlive {data.IsAlive}");
             if (data.IsAlive)
             {
-                Debug.Log("Attack");
                 data.TakeDamage(Damage);
             }
             else
             {
                 PlayerTransform = null;
-                Debug.Log($"PlayerTransform {PlayerTransform}");
             }
         }
-
     }
 
     private void UpdateAttackLogic()

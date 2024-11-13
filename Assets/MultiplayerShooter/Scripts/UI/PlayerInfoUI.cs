@@ -50,6 +50,6 @@ public class PlayerInfoUI : MonoBehaviour
         int minutes = Mathf.FloorToInt(timeWave / 60);  
         int seconds = Mathf.FloorToInt(timeWave % 60);
 
-        _timeWaveText.text = $"{waveStatus}:  {minutes:D2}:{seconds:D2}";
+        _timeWaveText.text = $"{waveStatus}  {minutes:D2}:{seconds:D2}";
     }
 }

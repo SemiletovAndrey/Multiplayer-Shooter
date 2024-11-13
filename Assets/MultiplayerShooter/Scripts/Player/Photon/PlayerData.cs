@@ -20,7 +20,8 @@ public class PlayerData : NetworkBehaviour
     [Networked, OnChangedRender(nameof(OnHealthChangedMethod))]
     public int CurrentHP
     {
-        get => _health; set
+        get => _health;
+        set
         {
             if (_health != value)
             {
@@ -70,6 +71,7 @@ public class PlayerData : NetworkBehaviour
         }
         SetActiveSkin(ActiveSkinIndex);
         SetActiveWeapon(ActiveWeaponIndex);
+        OnPlayerDeath += HandlePlayerDeath;
     }
 
     public void TakeDamage(int damage)
@@ -85,7 +87,6 @@ public class PlayerData : NetworkBehaviour
 
     public void Die()
     {
-        // TO DO Camera 
         if (!Object.HasStateAuthority) return;
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
         IsAlive = false;
@@ -165,6 +166,16 @@ public class PlayerData : NetworkBehaviour
         }
     }
 
+    public void AddHeal(int healthCount)
+    {
+        CurrentHP = Mathf.Clamp(CurrentHP + healthCount, 0, MaxHP);
+    }
+
+    public void AddAmmo(int ammoCount)
+    {
+        ActiveWeapon.AddAmmo(ammoCount);
+    }
+
     private void OnHealthChangedMethod()
     {
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
@@ -173,5 +184,17 @@ public class PlayerData : NetworkBehaviour
     private void OnKillCountChangedMethod()
     {
         OnKillCountChanged?.Invoke(Kills);
+    }
+
+    private void HandlePlayerDeath(PlayerRef player)
+    {
+        if (HasStateAuthority)
+        {
+            var aliveManager = FindObjectOfType<PlayerAliveManager>();
+            if (aliveManager != null)
+            {
+                aliveManager.DiePlayerRpc();
+            }
+        }
     }
 }

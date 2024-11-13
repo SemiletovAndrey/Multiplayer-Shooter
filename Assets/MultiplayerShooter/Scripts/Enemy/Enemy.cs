@@ -73,8 +73,6 @@ public abstract class Enemy : NetworkBehaviour
 
         if (hitColliders == null)
         {
-            Debug.Log("No players found in detection range.");
-
             return;
         }
 
@@ -98,6 +96,15 @@ public abstract class Enemy : NetworkBehaviour
             playerData.IncreaseKillCount();
         }
     }
+    
+    public void TakeDamage(int damage)
+    {
+        Hp -= damage;
+        if (Hp <= 0)
+        {
+            Die();
+        }
+    }
 
     protected void MoveTowardsPlayer()
     {
@@ -111,10 +118,9 @@ public abstract class Enemy : NetworkBehaviour
         Vector2 direction = (PlayerTransform.position - transform.position).normalized;
         float distanceToPlayer = Vector2.Distance(transform.position, PlayerTransform.position);
 
-        if (prevIsFaceLeft == DirectionEnemy(direction))
-        {
+      
             RpcSetFacingDirection(direction);
-        }
+        
 
         if (distanceToPlayer > AttackRange)
         {

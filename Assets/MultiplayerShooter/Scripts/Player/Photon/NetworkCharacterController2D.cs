@@ -42,12 +42,10 @@ public class NetworkCharacterController2D : NetworkBehaviour
         if (data.direction.x < 0 && !IsFacingLeft)
         {
             IsFacingLeft = true;
-            Debug.Log("Turning Left");
         }
         else if (data.direction.x > 0 && IsFacingLeft)
         {
             IsFacingLeft = false;
-            Debug.Log("Turning Right");
         }
     }
 

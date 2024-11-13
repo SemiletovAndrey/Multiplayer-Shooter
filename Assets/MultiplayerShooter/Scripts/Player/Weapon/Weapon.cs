@@ -18,10 +18,12 @@ public abstract class Weapon : NetworkBehaviour
 
     private float _lastShootTime = 0f;
     private int _currentAmmo;
+
     public event Action<int, int> OnAmmoChanged;
 
 
-    [Networked] protected int CurrentAmmo
+    [Networked, OnChangedRender(nameof(OnAmmoCountChangedMethod))] 
+    protected int CurrentAmmo
     {
         get => _currentAmmo;
         set
@@ -29,16 +31,8 @@ public abstract class Weapon : NetworkBehaviour
             if (_currentAmmo != value)
             {
                 _currentAmmo = value;
-                OnAmmoChanged?.Invoke(_currentAmmo, maxAmmo);  // Вызываем событие обновления боезапаса
+                OnAmmoChanged?.Invoke(_currentAmmo, maxAmmo);
             }
-        }
-    }
-
-    public override void Spawned()
-    {
-        if (Object.HasStateAuthority)
-        {
-            CurrentAmmo = maxAmmo;
         }
     }
 
@@ -47,6 +41,11 @@ public abstract class Weapon : NetworkBehaviour
     public int BulletsPerShot => bulletsPerShot;
     public int Ammo => CurrentAmmo;
     public int MaxAmmo => maxAmmo;
+
+    public override void Spawned()
+    {
+        CurrentAmmo = MaxAmmo;
+    }
 
     public virtual void Shoot(float aimAngle)
     {
@@ -91,5 +90,9 @@ public abstract class Weapon : NetworkBehaviour
             bulletScript.Initialize(new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)),
                 Damage, BulletLifetime, PlayerData);
         }
+    }
+    private void OnAmmoCountChangedMethod()
+    {
+        OnAmmoChanged?.Invoke(Ammo,MaxAmmo);
     }
 }

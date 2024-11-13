@@ -6,7 +6,6 @@ public class WeaponHandler : NetworkBehaviour
 {
     [SerializeField] private List<GameObject> _weapons;
 
-    public int WeaponCount => _weapons.Count;
 
     public void SetWeaponOnIndex(int index)
     {

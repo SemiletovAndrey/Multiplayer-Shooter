@@ -5,8 +5,9 @@ using Fusion;
 using System.Linq;
 public class EnemySpawner : NetworkBehaviour
 {
-    [SerializeField] private float spawnRadius = 10f;
-    [SerializeField] private float minimalSpawnRadius;
+    [SerializeField] private float _spawnRadius = 10f;
+    [SerializeField] private float _minimalSpawnRadius;
+    [SerializeField] private PlayerSpawner _playerSpawner;
 
     private float _spawnInterval;
     private List<GameObject> _enemyTypes;
@@ -14,13 +15,6 @@ public class EnemySpawner : NetworkBehaviour
 
     private List<Enemy> _enemies = new List<Enemy>();
 
-    private Dictionary<PlayerRef, NetworkObject> _playerObjects;
-
-
-    public void Initialize(Dictionary<PlayerRef, NetworkObject> playerObjects)
-    {
-        _playerObjects = playerObjects;
-    }
 
     public void InitializeWave(float spawnInterval, List<GameObject> enemyTypes)
     {
@@ -57,7 +51,7 @@ public class EnemySpawner : NetworkBehaviour
     {
 
         var playerTransform = GetRandomPlayerTransform();
-        Vector2 spawnPosition = (Vector2)playerTransform.position + Random.insideUnitCircle * spawnRadius;
+        Vector2 spawnPosition = (Vector2)playerTransform.position + Random.insideUnitCircle * _spawnRadius;
 
         int randomEnemyIndex = Random.Range(0, _enemyTypes.Count);
         GameObject enemyPrefab = _enemyTypes[randomEnemyIndex];
@@ -74,7 +68,7 @@ public class EnemySpawner : NetworkBehaviour
 
     private Transform GetRandomPlayerTransform()
     {
-        var player = _playerObjects.Values.ElementAt(Random.Range(0, _playerObjects.Count));
-        return player.transform;
+        var randomPlayer = _playerSpawner._spawnedCharacters.ElementAt(Random.Range(0, _playerSpawner._spawnedCharacters.Count)).Value;
+        return randomPlayer.transform;
     }
 }

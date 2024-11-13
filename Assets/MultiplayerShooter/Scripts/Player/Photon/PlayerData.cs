@@ -6,12 +6,15 @@ using Zenject;
 public class PlayerData : NetworkBehaviour
 {
     [SerializeField] private Transform[] _skins;
+    [SerializeField] private Weapon[] _weapons;
     [SerializeField] private PlayerAnimation _playerAnimation;
     [SerializeField] private PlayerDeath _playerDeath;
     [SerializeField] public int MaxHP;
 
     private int _health;
     private int _kills;
+
+    private WeaponPhotonManager _weaponPhotonManager;
 
     [Networked] public string Nickname { get; set; }
     [Networked, OnChangedRender(nameof(OnHealthChangedMethod))]
@@ -26,7 +29,7 @@ public class PlayerData : NetworkBehaviour
             }
         }
     }
-    [Networked, OnChangedRender(nameof (OnKillCountChangedMethod))]
+    [Networked, OnChangedRender(nameof(OnKillCountChangedMethod))]
     public int Kills
     {
         get => _kills;
@@ -40,28 +43,33 @@ public class PlayerData : NetworkBehaviour
         }
     }
     [Networked] public int ActiveSkinIndex { get; set; }
+    [Networked] public int ActiveWeaponIndex { get; set; }
     [Networked] public int AllDamage { get; set; }
     [Networked, OnChangedRender(nameof(OnIsAliveChanged))] public bool IsAlive { get; private set; }
     [Networked] public Weapon ActiveWeapon { get; set; }
 
     public static event Action<PlayerRef> OnPlayerDeath;
 
-    public event Action<int,int> OnHealthChanged;
+    public event Action<int, int> OnHealthChanged;
     public event Action<int> OnKillCountChanged;
+
 
     public override void Spawned()
     {
         base.Spawned();
-
+        _weaponPhotonManager = FindObjectOfType<WeaponPhotonManager>();
         if (Object.HasStateAuthority)
         {
             CurrentHP = MaxHP;
             Kills = 0;
-            int randomIndexCharacter = UnityEngine.Random.Range(0, 3);
+            int randomIndexCharacter = UnityEngine.Random.Range(0, _skins.Length);
+            int randomIndexWeapon = _weaponPhotonManager.AssignUniqueWeaponIndex(Object.InputAuthority);
             ActiveSkinIndex = randomIndexCharacter;
+            ActiveWeaponIndex = randomIndexWeapon;
             IsAlive = true;
         }
         SetActiveSkin(ActiveSkinIndex);
+        SetActiveWeapon(ActiveWeaponIndex);
     }
 
     public void TakeDamage(int damage)
@@ -127,11 +135,37 @@ public class PlayerData : NetworkBehaviour
     {
         for (int i = 0; i < _skins.Length; i++)
         {
-            _skins[i].gameObject.SetActive(i == skinIndex);
+            if (i == skinIndex)
+            {
+                _skins[i].gameObject.SetActive(true);
+                _skins[i].gameObject.GetComponent<Animator>().enabled = true;
+                _skins[i].gameObject.GetComponent<NetworkMecanimAnimator>().enabled = true;
+            }
+            else
+            {
+                _skins[i].gameObject.SetActive(false);
+            }
         }
     }
 
-    private  void OnHealthChangedMethod()
+    public void SetActiveWeapon(int indexWeapon)
+    {
+        for (int i = 0; i < _weapons.Length; i++)
+        {
+            if (i == indexWeapon)
+            {
+                _weapons[i].gameObject.SetActive(true);
+                ActiveWeapon = _weapons[i];
+                gameObject.GetComponent<ShotCharacterController>().SetCurrentWeapon(ActiveWeapon);
+            }
+            else
+            {
+                _weapons[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void OnHealthChangedMethod()
     {
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
     }

@@ -14,24 +14,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     [Inject] private IInputService _inputService;
 
-
-    [SerializeField] private NetworkPrefabRef _playerPrefab;
-    [SerializeField] private EnemySpawner _enemySpawner;
-
-    [SerializeField] private GameObject _playerControllerUI;
-    [SerializeField] private PlayerInfoUI _playerInfoUI;
-
-    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-
-    private PlayerFacade playerFacade;
-
-    private List<int> _indexWeapons = new List<int>() { 0, 1, 2, 3 };
-
-
-    private void Awake()
-    {
-        _enemySpawner.Initialize(_spawnedCharacters);
-    }
+    [SerializeField] private PlayerSpawner _playerSpawner;
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
@@ -101,35 +84,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        if (runner.IsServer && !_spawnedCharacters.ContainsKey(player))
-        {
-            Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
-            NetworkObject networkPlayer = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-            playerFacade = networkPlayer.GetComponent<PlayerFacade>();
-
-            int indexWeapon = UnityEngine.Random.Range(1, _indexWeapons.Count);
-            playerFacade.SetWeapon(_indexWeapons[indexWeapon]);
-            _indexWeapons.RemoveAt(indexWeapon);
-
-            //_playerInfoUI.InitializePlayerUI(playerFacade.GetComponent<PlayerData>());
-            
-            _spawnedCharacters.Add(player, networkPlayer);
-        }
-        if (player == runner.LocalPlayer)
-        {
-            _playerInfoUI.InitializePlayerUI(playerFacade.GetComponent<PlayerData>());
-            _playerControllerUI.SetActive(true);
-            _playerInfoUI.gameObject.SetActive(true);
-        }
-
+        
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
-        {
-            runner.Despawn(networkObject);
-            _spawnedCharacters.Remove(player);
-        }
+       
     }
 }

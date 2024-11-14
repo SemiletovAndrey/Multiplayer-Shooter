@@ -6,9 +6,9 @@ public class AmmoBox : Item
 {
     [SerializeField] private int ammoCount;
 
-    public override void Pickup(PlayerData playerData)
+    public override void Pickup(PlayerModel playerModel)
     {
-        playerData.AddAmmo(ammoCount);
+        playerModel.AddAmmo(ammoCount);
         Runner.Despawn(Object);
     }
 }

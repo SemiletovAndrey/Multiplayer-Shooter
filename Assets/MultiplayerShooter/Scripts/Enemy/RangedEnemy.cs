@@ -14,6 +14,7 @@ public class RangedEnemy : Enemy
     protected override void Attack()
     {
         base.Attack();
+        if (PlayerTransform == null) return;
 
         if (ProjectilePrefab != null)
         {
@@ -21,6 +22,8 @@ public class RangedEnemy : Enemy
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
             SpawnProjectile(angle);
+
+            PlayerTransform = null;
         }
     }
 

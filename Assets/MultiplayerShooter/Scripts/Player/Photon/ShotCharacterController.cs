@@ -6,7 +6,7 @@ public class ShotCharacterController : NetworkBehaviour
     [SerializeField] private Weapon _currentWeapon;
     [SerializeField] private Transform _weaponTransform;
 
-    private PlayerData _playerData;
+    private PlayerModel _playerModel;
 
     [Networked, OnChangedRender(nameof(UpdateWeaponRotation))] private float AimAngle { get; set; }
 

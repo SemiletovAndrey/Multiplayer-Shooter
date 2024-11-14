@@ -1,9 +1,10 @@
 using Fusion;
 using System;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
-public class PlayerData : NetworkBehaviour
+public class PlayerModel : NetworkBehaviour
 {
     [SerializeField] private Transform[] _skins;
     [SerializeField] private Weapon[] _weapons;
@@ -13,6 +14,7 @@ public class PlayerData : NetworkBehaviour
 
     private int _health;
     private int _kills;
+    private bool _isAlive;
 
     private WeaponPhotonManager _weaponPhotonManager;
 
@@ -44,15 +46,24 @@ public class PlayerData : NetworkBehaviour
         }
     }
     [Networked] public int ActiveSkinIndex { get; set; }
-    [Networked] public int ActiveWeaponIndex { get; set; }
-    [Networked] public int AllDamage { get; set; }
-    [Networked, OnChangedRender(nameof(OnIsAliveChanged))] public bool IsAlive { get; private set; }
-    [Networked] public Weapon ActiveWeapon { get; set; }
-
-    public static event Action<PlayerRef> OnPlayerDeath;
+    [Networked] private int ActiveWeaponIndex { get; set; }
+    [Networked, HideInInspector] public int AllDamage { get; set; }
+    [Networked, OnChangedRender(nameof(OnIsAliveChanged)), HideInInspector] public bool IsAlive {
+        get => _isAlive;
+        set
+        {
+            if (_isAlive != value)
+            {
+                _isAlive = value;
+                OnDeathPlayer?.Invoke();
+            }
+        }
+    }
+    [Networked, HideInInspector] public Weapon ActiveWeapon { get; set; }
 
     public event Action<int, int> OnHealthChanged;
     public event Action<int> OnKillCountChanged;
+    public event Action OnDeathPlayer;
 
 
     public override void Spawned()
@@ -71,14 +82,13 @@ public class PlayerData : NetworkBehaviour
         }
         SetActiveSkin(ActiveSkinIndex);
         SetActiveWeapon(ActiveWeaponIndex);
-        OnPlayerDeath += HandlePlayerDeath;
     }
 
     public void TakeDamage(int damage)
     {
         if (!IsAlive) return;
 
-        CurrentHP -= damage;
+        CurrentHP = Mathf.Clamp(CurrentHP - damage, 0, MaxHP);
         if (CurrentHP <= 0)
         {
             Die();
@@ -91,20 +101,14 @@ public class PlayerData : NetworkBehaviour
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
         IsAlive = false;
 
-        OnPlayerDeath?.Invoke(Object.InputAuthority);
-    }
-
-    private void OnIsAliveChanged()
-    {
-        HandleDeath();
-    }
-
-    private void HandleDeath()
-    {
-        if (!IsAlive)
+        var aliveManager = FindObjectOfType<PlayerAliveManager>();
+        if (aliveManager != null && Runner.IsServer)
         {
-            _playerDeath.Death();
-            _playerAnimation.PlayDie();
+            // Remove the dead player from the list of alive characters on the server
+            aliveManager.OnPlayerDeath(Object.InputAuthority);
+
+            // Broadcast the death to all clients
+            RPC_HandleDeath(Object.InputAuthority);
         }
     }
 
@@ -128,25 +132,6 @@ public class PlayerData : NetworkBehaviour
     {
         _playerAnimation.Animator = _skins[ActiveSkinIndex].gameObject.GetComponent<Animator>();
         ApplySkin(skinIndex);
-    }
-
-
-
-    private void ApplySkin(int skinIndex)
-    {
-        for (int i = 0; i < _skins.Length; i++)
-        {
-            if (i == skinIndex)
-            {
-                _skins[i].gameObject.SetActive(true);
-                _skins[i].gameObject.GetComponent<Animator>().enabled = true;
-                _skins[i].gameObject.GetComponent<NetworkMecanimAnimator>().enabled = true;
-            }
-            else
-            {
-                _skins[i].gameObject.SetActive(false);
-            }
-        }
     }
 
     public void SetActiveWeapon(int indexWeapon)
@@ -176,6 +161,44 @@ public class PlayerData : NetworkBehaviour
         ActiveWeapon.AddAmmo(ammoCount);
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_HandleDeath(PlayerRef deadPlayerRef)
+    {
+        if (Object.InputAuthority == deadPlayerRef)
+        {
+            var aliveManager = FindObjectOfType<PlayerAliveManager>();
+            var nextAlivePlayer = aliveManager?.AliveCharacters
+                .Where(entry => entry.Key != Object.InputAuthority)
+                .Select(entry => entry.Value)
+                .FirstOrDefault();
+
+            if (nextAlivePlayer != null)
+            {
+                var mainCamera = Camera.main;
+                if (mainCamera != null)
+                {
+                    var cameraFollower = mainCamera.GetComponent<CameraFollower>();
+                    if (cameraFollower != null)
+                    {
+                        cameraFollower.CameraFollow(nextAlivePlayer.transform);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("CameraFollower component not found on the main camera.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("Main camera not found.");
+                }
+            }
+            else
+            {
+                Debug.Log("No other live players available to switch the camera.");
+            }
+        }
+    }
+
     private void OnHealthChangedMethod()
     {
         OnHealthChanged?.Invoke(CurrentHP, MaxHP);
@@ -186,15 +209,35 @@ public class PlayerData : NetworkBehaviour
         OnKillCountChanged?.Invoke(Kills);
     }
 
-    private void HandlePlayerDeath(PlayerRef player)
+    private void ApplySkin(int skinIndex)
     {
-        if (HasStateAuthority)
+        for (int i = 0; i < _skins.Length; i++)
         {
-            var aliveManager = FindObjectOfType<PlayerAliveManager>();
-            if (aliveManager != null)
+            if (i == skinIndex)
             {
-                aliveManager.DiePlayerRpc();
+                _skins[i].gameObject.SetActive(true);
+                _skins[i].gameObject.GetComponent<Animator>().enabled = true;
+                _skins[i].gameObject.GetComponent<NetworkMecanimAnimator>().enabled = true;
             }
+            else
+            {
+                _skins[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void OnIsAliveChanged()
+    {
+        HandleDeath();
+        OnDeathPlayer?.Invoke();
+    }
+
+    private void HandleDeath()
+    {
+        if (!IsAlive)
+        {
+            _playerDeath.Death();
+            _playerAnimation.PlayDie();
         }
     }
 }

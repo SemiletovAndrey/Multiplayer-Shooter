@@ -8,17 +8,17 @@ public class ItemsSpawner : NetworkBehaviour
 {
     [SerializeField] private float _spawnRadius = 10f;
     [SerializeField] private float _minimalSpawnRadius;
-    [SerializeField] private PlayerSpawner _playerSpawner;
+    [SerializeField] private PlayerAliveManager _playerAliveManager;
 
     private float _spawnIntervalMin;
     private float _spawnIntervalMax;
-    private List<GameObject> _itemsType;
+    private List<Item> _itemsType;
     private Coroutine _spawnCoroutine;
 
     private List<Item> _items = new List<Item>();
 
 
-    public void InitializeWave(float spawnIntervalMin,float spawnIntervalMax, List<GameObject> itemsType)
+    public void InitializeWave(float spawnIntervalMin,float spawnIntervalMax, List<Item> itemsType)
     {
         _spawnIntervalMin = spawnIntervalMin;
         _spawnIntervalMax = spawnIntervalMax;
@@ -51,26 +51,30 @@ public class ItemsSpawner : NetworkBehaviour
 
     private void SpawnItem()
     {
-
         var playerTransform = GetRandomPlayerTransform();
+        if (playerTransform != null)
+        {
         Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
 
         int randomEnemyIndex = Random.Range(0, _itemsType.Count);
-        GameObject enemyPrefab = _itemsType[randomEnemyIndex];
+        GameObject enemyPrefab = _itemsType[randomEnemyIndex].gameObject;
 
-        if (Runner.IsServer)
-        {
-            NetworkObject enemyObject = Runner.Spawn(enemyPrefab, spawnPosition, Quaternion.identity);
-            Item item = enemyObject.GetComponent<Item>();
+            if (Runner.IsServer)
+            {
+                NetworkObject enemyObject = Runner.Spawn(enemyPrefab, spawnPosition, Quaternion.identity);
+                Item item = enemyObject.GetComponent<Item>();
 
-            _items.Add(item);
+                _items.Add(item);
 
+            }
         }
     }
 
     private Transform GetRandomPlayerTransform()
     {
-        var randomPlayer = _playerSpawner.SpawnedCharacters.ElementAt(Random.Range(0, _playerSpawner.SpawnedCharacters.Count)).Value;
+        if (_playerAliveManager.AliveCharacters.Count == 0) return null;
+
+        var randomPlayer = _playerAliveManager.AliveCharacters.ElementAt(Random.Range(0, _playerAliveManager.AliveCharacters.Count)).Value;
         return randomPlayer.transform;
     }
 }

@@ -159,14 +159,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2385969940288078237, guid: 08bbb26fa4640474b9f6b203d2d8e1c9, type: 3}
       propertyPath: NetworkedBehaviours.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2385969940288078237, guid: 08bbb26fa4640474b9f6b203d2d8e1c9, type: 3}
       propertyPath: NetworkedBehaviours.Array.data[0]
       value: 
-      objectReference: {fileID: -389266242174809308}
+      objectReference: {fileID: 8794015297544605042}
     - target: {fileID: 2385969940288078237, guid: 08bbb26fa4640474b9f6b203d2d8e1c9, type: 3}
       propertyPath: NetworkedBehaviours.Array.data[1]
+      value: 
+      objectReference: {fileID: -389266242174809308}
+    - target: {fileID: 2385969940288078237, guid: 08bbb26fa4640474b9f6b203d2d8e1c9, type: 3}
+      propertyPath: NetworkedBehaviours.Array.data[2]
       value: 
       objectReference: {fileID: 6074591009488655581}
     - target: {fileID: 2653430857128477301, guid: 08bbb26fa4640474b9f6b203d2d8e1c9, type: 3}
@@ -234,3 +238,14 @@ MonoBehaviour:
   explosionRadius: 5
   visualShadowBomb: {fileID: 4802697927260104698}
   ShowBombShadow: 1
+--- !u!114 &8794015297544605042 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7440499372047091067, guid: 08bbb26fa4640474b9f6b203d2d8e1c9, type: 3}
+  m_PrefabInstance: {fileID: 7112476202155309047}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7149004457652483670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

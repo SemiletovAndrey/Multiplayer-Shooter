@@ -254,7 +254,7 @@ MonoBehaviour:
   Speed: 1
   TimeAttackSpeed: 1
   TimeAttack: 0
-  AttackRange: 1
+  AttackRange: 1.5
   _visualObject: {fileID: 1435955236294499369}
   EnemyAnimation: {fileID: 1231765005244382851}
   detectionRadius: 10

@@ -42,6 +42,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
             NetworkObject networkObject = SpawnedCharacters[player];
             Runner.Despawn(networkObject);
             SpawnedCharacters.Remove(player);
+            _playerAliveManager.AliveCharacters.Remove(player);
         }
     }
 }

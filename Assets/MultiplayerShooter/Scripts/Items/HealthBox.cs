@@ -5,9 +5,9 @@ using UnityEngine;
 public class HealthBox : Item
 {
     [SerializeField] private int _healAmount;
-    public override void Pickup(PlayerData playerData)
+    public override void Pickup(PlayerModel playerModel)
     {
-        playerData.AddHeal(_healAmount);
+        playerModel.AddHeal(_healAmount);
         Runner.Despawn(Object);
     }
 }

@@ -1,4 +1,5 @@
 using Fusion;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +7,18 @@ using UnityEngine;
 
 public class PlayerAliveManager : NetworkBehaviour
 {
-    // TO DO
-    [Networked] public NetworkDictionary<PlayerRef, NetworkObject> AliveCharacters => default;
+    [Networked, OnChangedRender(nameof(OnChangeAlivePlayer))] public NetworkDictionary<PlayerRef, NetworkObject> AliveCharacters => default;
+
+    [SerializeField] private GameObject _playerDeathUI;
+
+    public void OnChangeAlivePlayer()
+    {
+        if (AliveCharacters.Count == 0)
+        {
+            Camera.main.gameObject.GetComponent<CameraFollower>().enabled = false;
+            _playerDeathUI.SetActive(true);
+        }
+    }
 
     public void AddAliveCharacter(PlayerRef player, NetworkObject networkObject)
     {
@@ -25,8 +36,33 @@ public class PlayerAliveManager : NetworkBehaviour
         if (Object.HasStateAuthority)
         {
             Debug.Log("Die player");
-            AliveCharacters.Remove(Object.InputAuthority);
+            DiePlayerRpc();
             CheckAndFollowNextAlivePlayer();
+        }
+    }
+
+    public void OnPlayerDeath(PlayerRef playerRef)
+    {
+        if (Runner.IsServer)
+        {
+            RemovePlayerFromDictionary(playerRef);
+        }
+        else
+        {
+            Debug.LogWarning("Только сервер может удалять игроков из словаря.");
+        }
+    }
+
+    private void RemovePlayerFromDictionary(PlayerRef playerRef)
+    {
+        if (AliveCharacters.ContainsKey(playerRef))
+        {
+            AliveCharacters.Remove(playerRef);
+            Debug.Log($"Игрок {playerRef} был удален из словаря.");
+        }
+        else
+        {
+            Debug.LogWarning($"Игрок {playerRef} не найден в словаре.");
         }
     }
 
@@ -75,5 +111,4 @@ public class PlayerAliveManager : NetworkBehaviour
             Debug.Log("Нет доступных игроков для переключения камеры.");
         }
     }
-
 }

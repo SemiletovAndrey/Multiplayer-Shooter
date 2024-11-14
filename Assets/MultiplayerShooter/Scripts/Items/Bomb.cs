@@ -11,16 +11,16 @@ public class Bomb : Item
     [SerializeField] private GameObject visualShadowBomb;
     [SerializeField] private float ShowBombShadow = 1f;
 
-    public override void Pickup(PlayerData playerData)
+    public override void Pickup(PlayerModel playerModel)
     {
-        Explode(playerData);
+        Explode(playerModel);
         visualShadowBomb.gameObject.SetActive(true);
         visualShadowBomb.transform.localScale = new Vector3(visualShadowBomb.transform.localScale.x * explosionRadius,
             visualShadowBomb.transform.localScale.y * explosionRadius, 0);
         StartCoroutine(DeleteBomb());
     }
 
-    private void Explode(PlayerData playerData)
+    private void Explode(PlayerModel playerModel)
     {
         var allNetworkObjects = Runner.GetAllNetworkObjects();
 
@@ -33,7 +33,7 @@ public class Bomb : Item
                 float distance = Vector3.Distance(explosionPosition, networkObject.transform.position);
                 if (distance <= explosionRadius)
                 {
-                    enemy.TakeDamage(damageAmount, playerData);
+                    enemy.TakeDamage(damageAmount, playerModel);
                 }
             }
         }

@@ -238,13 +238,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca4bdaa6373aa9943b2bf22510464deb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TimeShowDeathAnimation: 10
   Hp: 20
   Damage: 6
   Speed: 0.6
   TimeAttackSpeed: 2
-  AttackRange: 1
+  TimeAttack: 0
+  AttackRange: 1.5
   _visualObject: {fileID: 7608976715905806936}
   EnemyAnimation: {fileID: 7063498331350082333}
+  detectionRadius: 10
+  _IsDead: 0
   timeToDealDamage: 1
 --- !u!114 &7063498331350082333 stripped
 MonoBehaviour:

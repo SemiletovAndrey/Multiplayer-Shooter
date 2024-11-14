@@ -8,6 +8,7 @@ public class WaveManager : NetworkBehaviour
 {
     [SerializeField] private List<WaveConfig> waves;
     [SerializeField] private EnemySpawner _enemySpawner;
+    [SerializeField] private ItemsSpawner _itemSpawner;
 
     [Networked, OnChangedRender(nameof(OnTimeChangedMethod))]
     public float TimeWave
@@ -18,19 +19,29 @@ public class WaveManager : NetworkBehaviour
             if (_timeWave != value)
             {
                 _timeWave = value;
-                OnTimeChanged?.Invoke(_waveStatus, _timeWave);
+                OnTimeChanged?.Invoke(_timeWave);
             }
         }
     }
 
-    [Networked]
+    [Networked, OnChangedRender(nameof(OnStatusChangedMethod))]
     public string WaveStatus
     {
         get { return _waveStatus; }
-        set { _waveStatus = value; }
+        set
+        {
+            if (_waveStatus != value)
+            {
+                _waveStatus = value;
+                OnStatusChanged?.Invoke(_waveStatus);
+            }
+        }
     }
 
-    public event Action<string, float> OnTimeChanged;
+    
+
+    public event Action<float> OnTimeChanged;
+    public event Action<string> OnStatusChanged;
 
     private float _timeWave;
     private string _waveStatus;
@@ -49,12 +60,13 @@ public class WaveManager : NetworkBehaviour
         while (currentWaveIndex < waves.Count)
         {
             WaveConfig currentWave = waves[currentWaveIndex];
-            _enemySpawner.InitializeWave(currentWave.SpawnInterval, currentWave.EnemyTypes);
+            _enemySpawner.InitializeWave(currentWave.SpawnIntervalEnemy, currentWave.EnemyTypes);
+            _itemSpawner.InitializeWave(currentWave.MinIntervalSpawn,currentWave.MaxIntervalSpawn, currentWave.ItemType);
             TimeWave = currentWave.WaveDuration;
 
 
             float timeRemaining = TimeWave;
-            _waveStatus = "Attack";
+            WaveStatus = "Attack";
             while (timeRemaining > 0)
             {
                 timeRemaining -= Time.deltaTime;
@@ -63,7 +75,7 @@ public class WaveManager : NetworkBehaviour
             }
 
             _enemySpawner.StopSpawning();
-            _waveStatus = "Holiday";
+            WaveStatus = "Holiday";
             TimeWave = currentWave.TimeBetweenWaves;
             timeRemaining = TimeWave;
             while (timeRemaining > 0)
@@ -76,11 +88,17 @@ public class WaveManager : NetworkBehaviour
 
             currentWaveIndex++;
         }
+        WaveStatus = " ";
         Debug.Log("All waves completed!");
     }
 
     private void OnTimeChangedMethod()
     {
-        OnTimeChanged?.Invoke(_waveStatus, TimeWave);
+        OnTimeChanged?.Invoke(TimeWave);
     }
+    private void OnStatusChangedMethod()
+    {
+        OnStatusChanged?.Invoke(WaveStatus);
+    }
+
 }

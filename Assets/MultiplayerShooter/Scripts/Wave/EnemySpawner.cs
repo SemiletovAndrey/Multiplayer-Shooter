@@ -7,16 +7,16 @@ public class EnemySpawner : NetworkBehaviour
 {
     [SerializeField] private float _spawnRadius = 10f;
     [SerializeField] private float _minimalSpawnRadius;
-    [SerializeField] private PlayerSpawner _playerSpawner;
+    [SerializeField] private PlayerAliveManager _playerManagerAlive;
 
     private float _spawnInterval;
-    private List<GameObject> _enemyTypes;
+    private List<Enemy> _enemyTypes;
     private Coroutine _spawnCoroutine;
 
     private List<Enemy> _enemies = new List<Enemy>();
 
 
-    public void InitializeWave(float spawnInterval, List<GameObject> enemyTypes)
+    public void InitializeWave(float spawnInterval, List<Enemy> enemyTypes)
     {
         _spawnInterval = spawnInterval;
         _enemyTypes = enemyTypes;
@@ -51,24 +51,29 @@ public class EnemySpawner : NetworkBehaviour
     {
 
         var playerTransform = GetRandomPlayerTransform();
-        Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
-
-        int randomEnemyIndex = Random.Range(0, _enemyTypes.Count);
-        GameObject enemyPrefab = _enemyTypes[randomEnemyIndex];
-
-        if (Runner.IsServer)
+        if (playerTransform != null)
         {
-            NetworkObject enemyObject = Runner.Spawn(enemyPrefab, spawnPosition, Quaternion.identity);
-            Enemy enemy = enemyObject.GetComponent<Enemy>();
+            Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
 
-            _enemies.Add(enemy);
+            int randomEnemyIndex = Random.Range(0, _enemyTypes.Count);
+            GameObject enemyPrefab = _enemyTypes[randomEnemyIndex].gameObject;
 
+            if (Runner.IsServer)
+            {
+                NetworkObject enemyObject = Runner.Spawn(enemyPrefab, spawnPosition, Quaternion.identity);
+                Enemy enemy = enemyObject.GetComponent<Enemy>();
+
+                _enemies.Add(enemy);
+
+            }
         }
     }
 
     private Transform GetRandomPlayerTransform()
     {
-        var randomPlayer = _playerSpawner.SpawnedCharacters.ElementAt(Random.Range(0, _playerSpawner.SpawnedCharacters.Count)).Value;
+        if (_playerManagerAlive.AliveCharacters.Count == 0) return null;
+
+        var randomPlayer = _playerManagerAlive.AliveCharacters.ElementAt(Random.Range(0, _playerManagerAlive.AliveCharacters.Count)).Value;
         return randomPlayer.transform;
     }
 }

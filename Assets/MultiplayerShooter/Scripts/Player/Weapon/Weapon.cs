@@ -8,7 +8,7 @@ public abstract class Weapon : NetworkBehaviour
 {
     [SerializeField] protected NetworkPrefabRef BulletPrefab;
     [SerializeField] protected Transform ShootPoint;
-    [SerializeField] protected PlayerData PlayerData;
+    [SerializeField] protected PlayerModel PlayerModel;
 
     [SerializeField] protected float bulletLifetime = 2.0f;
     [SerializeField] protected int damage = 10;
@@ -93,7 +93,7 @@ public abstract class Weapon : NetworkBehaviour
             NetworkObject bullet = Runner.Spawn(BulletPrefab, position, Quaternion.Euler(0, 0, angle));
             Bullet bulletScript = bullet.GetComponent<Bullet>();
             bulletScript.Initialize(new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)),
-                Damage, BulletLifetime, PlayerData);
+                Damage, BulletLifetime, PlayerModel);
         }
     }
     private void OnAmmoCountChangedMethod()

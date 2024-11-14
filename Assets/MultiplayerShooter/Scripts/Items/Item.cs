@@ -5,14 +5,14 @@ using UnityEngine;
 
 public abstract class Item : NetworkBehaviour
 {
-    public abstract void Pickup(PlayerData playerData);
+    public abstract void Pickup(PlayerModel playerModel);
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             Debug.Log("Collision");
-            Pickup(collision.gameObject.GetComponent<PlayerData>());
+            Pickup(collision.gameObject.GetComponent<PlayerModel>());
         }
     }
 }

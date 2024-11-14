@@ -34,9 +34,9 @@ public class UIPhotonManager : NetworkBehaviour
         if (_playerSpawner.SpawnedCharacters.ContainsKey(player))
         {
             NetworkObject localPlayer = _playerSpawner.SpawnedCharacters[player];
-            PlayerData playerData = localPlayer.gameObject.GetComponent<PlayerData>();
+            PlayerModel playerModel = localPlayer.gameObject.GetComponent<PlayerModel>();
 
-            _playerInfoUI.InitializePlayerUI(playerData);
+            _playerInfoUI.InitializePlayerUI(playerModel);
             _playerControllerUI.SetActive(true);
             _playerInfoUI.gameObject.SetActive(true);
         }
@@ -45,4 +45,6 @@ public class UIPhotonManager : NetworkBehaviour
             Debug.LogWarning("Player not found in _spawnedCharacters");
         }
     }
+
+
 }

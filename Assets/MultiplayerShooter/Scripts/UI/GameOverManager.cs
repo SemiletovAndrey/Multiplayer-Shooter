@@ -7,7 +7,6 @@ public class GameOverManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerDeathUIPrefab;
     [SerializeField] private Transform playerListContainer;
-    [SerializeField] private GameObject gameOverPanel;
 
     [SerializeField] private PlayerSpawner _playerSpawner;
     [SerializeField] private PlayerAliveManager _playerAliveManager;
@@ -19,49 +18,37 @@ public class GameOverManager : MonoBehaviour
         foreach (var kvp in _playerSpawner.SpawnedCharacters)
         {
             _allPlayer.Add(kvp.Key, kvp.Value);
+            Debug.Log("Add");
         }
         OnGameOver(_allPlayer, _playerAliveManager);
     }
 
-    public void ShowGameOverUI(Dictionary<PlayerRef, NetworkObject> allPlayers, PlayerAliveManager playerAliveManager)
+    public void ShowGameOverUI(Dictionary<PlayerRef, NetworkObject> allPlayers)
     {
-        gameOverPanel.SetActive(true);
-
-        // Очищаем старые UI элементы
         foreach (Transform child in playerListContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // Проходим по всем игрокам
         foreach (var playerEntry in allPlayers)
         {
             PlayerRef playerRef = playerEntry.Key;
             NetworkObject networkObject = playerEntry.Value;
 
-            // Получаем PlayerModel (или другие данные), связанные с игроком
             PlayerModel playerModel = networkObject.GetComponent<PlayerModel>();
             if (playerModel != null)
             {
-                // Создаем UI-контейнер для игрока и заполняем его данными
                 GameObject playerUIObject = Instantiate(playerDeathUIPrefab, playerListContainer);
                 PlayerDeathUIContainer playerDeathUI = playerUIObject.GetComponent<PlayerDeathUIContainer>();
-                playerDeathUI.InitializePlayerDeathUI(playerModel);
+                bool isLocalPlayer = networkObject.HasInputAuthority;
+
+                playerDeathUI.InitializePlayerDeathUI(playerModel, isLocalPlayer);
             }
         }
     }
 
     public void OnGameOver(Dictionary<PlayerRef, NetworkObject> allPlayers, PlayerAliveManager playerAliveManager)
     {
-        bool allPlayersDead = false;
-        if (playerAliveManager.AliveCharacters.Count == 0)
-        {
-            allPlayersDead = true;
-        }
-
-        if (allPlayersDead)
-        {
-            ShowGameOverUI(allPlayers, playerAliveManager);
-        }
+        ShowGameOverUI(allPlayers);
     }
 }

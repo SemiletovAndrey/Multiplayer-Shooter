@@ -909,14 +909,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67ffa858c7c4e04787460ad083ce59d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _skins: []
-  _weapons: []
+  _skins:
+  - {fileID: 5142896713221306580}
+  - {fileID: 4374351198354812542}
+  - {fileID: 3551633488353166455}
+  - {fileID: 3884624574223943478}
+  _weapons:
+  - {fileID: 2255666161720635520}
+  - {fileID: 6124276144762814317}
+  - {fileID: 4099889854969826895}
   _playerAnimation: {fileID: 1006608463937622521}
   _playerDeath: {fileID: -8762801594301148061}
   MaxHP: 15
   _Nickname: Nick
   _CurrentHP: 0
   _Kills: 0
+  _ActiveSkinIndex: 0
+  _AllDamage: 0
   _IsAlive: 0
   _ActiveWeapon: {fileID: 0}
 --- !u!1 &8018449853226647264
@@ -1228,6 +1237,10 @@ PrefabInstance:
       propertyPath: NetworkedBehaviours.Array.data[0]
       value: 
       objectReference: {fileID: 2255666161720635520}
+    - target: {fileID: 653033421498913403, guid: 12b5f683c981bf047a28b0f64ee947f2, type: 3}
+      propertyPath: PlayerModel
+      value: 
+      objectReference: {fileID: 100439881680768804}
     - target: {fileID: 4648233647528367260, guid: 12b5f683c981bf047a28b0f64ee947f2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.39
@@ -1345,6 +1358,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3330497541187837138, guid: 2420eaa71f0312b44a4fcb003b2062e9, type: 3}
+      propertyPath: PlayerModel
+      value: 
+      objectReference: {fileID: 100439881680768804}
     - target: {fileID: 4339249502370607466, guid: 2420eaa71f0312b44a4fcb003b2062e9, type: 3}
       propertyPath: SortKey
       value: 265128427
@@ -1426,6 +1443,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3749029271557361838, guid: d9922662bc791fa41a488d640ef5c23a, type: 3}
+      propertyPath: PlayerModel
+      value: 
+      objectReference: {fileID: 100439881680768804}
     - target: {fileID: 3749029271557361838, guid: d9922662bc791fa41a488d640ef5c23a, type: 3}
       propertyPath: shootCooldown
       value: 0.2

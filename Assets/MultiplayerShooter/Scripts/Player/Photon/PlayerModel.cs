@@ -6,6 +6,9 @@ using Zenject;
 
 public class PlayerModel : NetworkBehaviour
 {
+    //TO DO Don't inject
+    [Inject] private PlayerInstallConfig _playerInstallConfig;
+
     [SerializeField] private Transform[] _skins;
     [SerializeField] private Weapon[] _weapons;
     [SerializeField] private PlayerAnimation _playerAnimation;
@@ -69,12 +72,14 @@ public class PlayerModel : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
+
         _weaponPhotonManager = FindObjectOfType<WeaponPhotonManager>();
         if (Object.HasStateAuthority)
         {
+            Nickname = _playerInstallConfig.NicknamePlayer;
             CurrentHP = MaxHP;
             Kills = 0;
-            int randomIndexCharacter = UnityEngine.Random.Range(0, _skins.Length);
+            int randomIndexCharacter = _playerInstallConfig.IndexSkin;
             int randomIndexWeapon = _weaponPhotonManager.AssignUniqueWeaponIndex(Object.InputAuthority);
             ActiveSkinIndex = randomIndexCharacter;
             ActiveWeaponIndex = randomIndexWeapon;

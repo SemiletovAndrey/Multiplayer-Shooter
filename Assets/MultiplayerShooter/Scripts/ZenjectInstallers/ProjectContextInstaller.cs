@@ -8,6 +8,8 @@ public class ProjectContextInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.Bind<IInputService>().To<MobileInputService>().AsSingle();
+
+        Container.Bind<PlayerInstallConfig>().FromNew().AsSingle();
     }
     private void BindInputServices()
     {

@@ -132,9 +132,9 @@ MonoBehaviour:
   BulletPrefab:
     RawGuidValue: f528e7d7d4f11134096141ba74bd7c31
   ShootPoint: {fileID: 7729693408636888467}
-  PlayerData: {fileID: 0}
-  bulletLifetime: 1
-  damage: 5
+  PlayerModel: {fileID: 0}
+  bulletLifetime: 0.3
+  damage: 6
   bulletsPerShot: 2
   maxAmmo: 25
   shootCooldown: 1.3

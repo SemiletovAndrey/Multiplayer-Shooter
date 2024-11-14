@@ -369,9 +369,10 @@ MonoBehaviour:
   _weaponText: {fileID: 1728964990991421038}
   _killsText: {fileID: 6318805604561525560}
   _timeWaveText: {fileID: 9007067167723711253}
+  _deathText: {fileID: 3385217294460872364}
   _statusWaveText: {fileID: 8462571303732169548}
   _waveManager: {fileID: 0}
-  _playerData: {fileID: 0}
+  _playerModel: {fileID: 0}
 --- !u!1 &5012208056268881875
 GameObject:
   m_ObjectHideFlags: 0

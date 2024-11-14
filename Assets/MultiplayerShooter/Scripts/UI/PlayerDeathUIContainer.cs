@@ -15,33 +15,27 @@ public class PlayerDeathUIContainer : MonoBehaviour
     [SerializeField] private Image _playerSkinsImage;
     [SerializeField] private List<Sprite> _playerSkinsSprites;
 
+    [SerializeField] private GameObject _youContainer;
+
     private PlayerModel _playerModel;
 
-    private void OnEnable()
-    {
-        InitPlayerDataUI();
-    }
-
-    private void InitPlayerDataUI()
+    private void InitPlayerDataUI(bool isLocalPlayer)
     {
         _nicknamePlayerText.text = _playerModel.Nickname;
         _killsPlayerText.text = _playerModel.Kills.ToString();
         _damagePlayerText.text = _playerModel.AllDamage.ToString();
-        if (_playerModel.IsAlive)
-        {
-            _statusPlayerLiveImages.gameObject.SetActive(true);
-            _statusPlayerDeadImages.gameObject.SetActive(false);
-        }
-        else
-        {
-            _statusPlayerDeadImages.gameObject.SetActive(true);
-            _statusPlayerLiveImages.gameObject.SetActive(false);
-        }
-        _playerSkinsImage.GetComponent<SpriteRenderer>().sprite = _playerSkinsSprites[_playerModel.ActiveSkinIndex];
+
+        _statusPlayerLiveImages.gameObject.SetActive(_playerModel.IsAlive);
+        _statusPlayerDeadImages.gameObject.SetActive(!_playerModel.IsAlive);
+
+        _playerSkinsImage.sprite = _playerSkinsSprites[_playerModel.ActiveSkinIndex];
+
+        _youContainer.SetActive(isLocalPlayer);
     }
 
-    public void InitializePlayerDeathUI(PlayerModel playerModel)
+    public void InitializePlayerDeathUI(PlayerModel playerModel, bool isLocalPlayer)
     {
         _playerModel = playerModel;
+        InitPlayerDataUI(isLocalPlayer);
     }
 }

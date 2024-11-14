@@ -10,7 +10,9 @@ public class WaveManager : NetworkBehaviour
     [SerializeField] private EnemySpawner _enemySpawner;
     [SerializeField] private ItemsSpawner _itemSpawner;
 
-    [Networked, OnChangedRender(nameof(OnTimeChangedMethod))]
+    [SerializeField] private GameOverManager _deathUI;
+
+    [Networked, OnChangedRender(nameof(OnTimeChangedMethod)), HideInInspector]
     public float TimeWave
     {
         get => _timeWave;
@@ -24,7 +26,7 @@ public class WaveManager : NetworkBehaviour
         }
     }
 
-    [Networked, OnChangedRender(nameof(OnStatusChangedMethod))]
+    [Networked, OnChangedRender(nameof(OnStatusChangedMethod)), HideInInspector]
     public string WaveStatus
     {
         get { return _waveStatus; }
@@ -38,14 +40,14 @@ public class WaveManager : NetworkBehaviour
         }
     }
 
-    
-
     public event Action<float> OnTimeChanged;
     public event Action<string> OnStatusChanged;
 
     private float _timeWave;
     private string _waveStatus;
     private int currentWaveIndex = 0;
+    private const float DelayWindowGameOver = 5f;
+
 
     public override void Spawned()
     {
@@ -84,12 +86,12 @@ public class WaveManager : NetworkBehaviour
                 TimeWave = Mathf.Max(0, timeRemaining);
                 yield return null;
             }
-            yield return new WaitForSeconds(currentWave.TimeBetweenWaves);
-
             currentWaveIndex++;
         }
-        WaveStatus = " ";
-        Debug.Log("All waves completed!");
+        WaveStatus = "All waves completed!";
+
+        yield return new WaitForSeconds(DelayWindowGameOver);
+        _deathUI.gameObject.SetActive(true);
     }
 
     private void OnTimeChangedMethod()
@@ -100,5 +102,4 @@ public class WaveManager : NetworkBehaviour
     {
         OnStatusChanged?.Invoke(WaveStatus);
     }
-
 }

@@ -41,9 +41,9 @@ public class Projectile : NetworkBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            if (collision.TryGetComponent<PlayerData>(out PlayerData playerData))
+            if (collision.TryGetComponent<PlayerModel>(out PlayerModel playerModel))
             {
-                playerData.TakeDamage(_damage);
+                playerModel.TakeDamage(_damage);
             }
             Runner.Despawn(Object);
         }

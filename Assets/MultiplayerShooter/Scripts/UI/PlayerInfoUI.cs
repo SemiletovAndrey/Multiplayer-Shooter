@@ -9,25 +9,32 @@ public class PlayerInfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _weaponText;
     [SerializeField] private TextMeshProUGUI _killsText;
     [SerializeField] private TextMeshProUGUI _timeWaveText;
+    [SerializeField] private TextMeshProUGUI _deathText;
+    [SerializeField] private TextMeshProUGUI _statusWaveText;
 
     [SerializeField] private WaveManager _waveManager;
-    [SerializeField] private PlayerData _playerData;
+    [SerializeField] private PlayerModel _playerModel;
 
     private void OnEnable()
     {
-        UpdateHealthUI(_playerData.CurrentHP, _playerData.MaxHP);
-        UpdateKillCountUI(_playerData.Kills);
-        UpdateAmmoUI(_playerData.ActiveWeapon.Ammo, _playerData.ActiveWeapon.MaxAmmo);
-        UpdateTimerWaveUI(_waveManager.WaveStatus,_waveManager.TimeWave);
+        UpdateHealthUI(_playerModel.CurrentHP, _playerModel.MaxHP);
+        UpdateKillCountUI(_playerModel.Kills);
+        UpdateAmmoUI(_playerModel.ActiveWeapon.Ammo, _playerModel.ActiveWeapon.MaxAmmo);
+        UpdateTimerWaveUI(_waveManager.TimeWave);
+        UpdateStatusWave(_waveManager.WaveStatus);
+
+        _deathText.gameObject.SetActive(false);
     }
 
-    public void InitializePlayerUI(PlayerData playerData)
+    public void InitializePlayerUI(PlayerModel playerModel)
     {
-        _playerData = playerData;
-        _playerData.OnHealthChanged += UpdateHealthUI;
-        _playerData.OnKillCountChanged += UpdateKillCountUI;
-        _playerData.ActiveWeapon.OnAmmoChanged += UpdateAmmoUI;
+        _playerModel = playerModel;
+        _playerModel.OnHealthChanged += UpdateHealthUI;
+        _playerModel.OnKillCountChanged += UpdateKillCountUI;
+        _playerModel.ActiveWeapon.OnAmmoChanged += UpdateAmmoUI;
+        _playerModel.OnDeathPlayer += UpdateIsAlivePlayer;
         _waveManager.OnTimeChanged += UpdateTimerWaveUI;
+        _waveManager.OnStatusChanged += UpdateStatusWave;
     }
 
     public void UpdateHealthUI(int currentHP, int maxHP)
@@ -45,11 +52,22 @@ public class PlayerInfoUI : MonoBehaviour
         _weaponText.text = $"Ammo: {currentAmmo}/{maxAmmo}";
     }
     
-    public void UpdateTimerWaveUI(string waveStatus, float timeWave)
+    public void UpdateStatusWave(string waveStatus)
+    {
+        _statusWaveText.text = $"{waveStatus}";
+    }
+    
+    public void UpdateTimerWaveUI(float timeWave)
     {
         int minutes = Mathf.FloorToInt(timeWave / 60);  
         int seconds = Mathf.FloorToInt(timeWave % 60);
 
-        _timeWaveText.text = $"{waveStatus}  {minutes:D2}:{seconds:D2}";
+        _timeWaveText.text = $"{minutes:D2}:{seconds:D2}";
+    }
+
+    public void UpdateIsAlivePlayer()
+    {
+        _deathText.gameObject.SetActive(true);
+        _healthText .gameObject.SetActive(false);
     }
 }

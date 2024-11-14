@@ -12,6 +12,6 @@ public class EnemyAnimation : NetworkBehaviour
 
     public void SetRunning(bool isRunning) => Animator.SetBool(RunHash, isRunning);
     public void SetStand(bool isStand) => Animator.SetBool(StandHash, isStand);
-    public void SetDie(bool isDead) => Animator.SetTrigger(DieHash);
+    public void SetDie(bool isDead) => Animator.SetBool(DieHash, isDead);
     public void PlayHit() => Animator.SetTrigger(HitHash);
 }

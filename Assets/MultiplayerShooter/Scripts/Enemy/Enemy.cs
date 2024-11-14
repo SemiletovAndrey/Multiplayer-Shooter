@@ -25,7 +25,7 @@ public abstract class Enemy : NetworkBehaviour
     [Networked, OnChangedRender(nameof(OnIsRunningChanged))] protected bool IsRunning { get; set; }
     [Networked, OnChangedRender(nameof(OnIsStandChanged))] protected bool IsStand { get; set; }
     [Networked, OnChangedRender(nameof(OnIsAlive))] public bool IsDead { get; set; }
-    [Networked, OnChangedRender(nameof(OnAttackChanged))] protected bool IsAttacking { get; set; }
+    [Networked, OnChangedRender(nameof(OnAttackChanged))] protected bool IsAttackingAnimation { get; set; }
 
     [Networked] protected float AttackCooldown { get; set; }
 
@@ -68,6 +68,7 @@ public abstract class Enemy : NetworkBehaviour
     protected void FindClosestPlayer()
     {
         if (PlayerTransform != null) return;
+
         int playerLayer = 1 << LayerMask.NameToLayer("Player");
         Collider2D hitColliders = _physicsScene.OverlapCircle(transform.position, detectionRadius, playerLayer);
 
@@ -77,32 +78,29 @@ public abstract class Enemy : NetworkBehaviour
         }
 
         Transform closestPlayer = null;
-        closestPlayer = hitColliders.transform;
+        if (hitColliders.GetComponent<NetworkCharacterController2D>().enabled == true)
+        {
+            closestPlayer = hitColliders.transform;
+        }
+        else
+        {
+            PlayerTransform = null;
+        }
 
         if (closestPlayer != null)
         {
             PlayerTransform = closestPlayer;
-            Debug.Log("Found closest player: " + closestPlayer.name);
         }
     }
 
 
-    public void TakeDamage(int damage, PlayerData playerData)
+    public void TakeDamage(int damage, PlayerModel playerModel)
     {
         Hp -= damage;
         if (Hp <= 0)
         {
             Die();
-            playerData.IncreaseKillCount();
-        }
-    }
-    
-    public void TakeDamage(int damage)
-    {
-        Hp -= damage;
-        if (Hp <= 0)
-        {
-            Die();
+            playerModel.IncreaseKillCount();
         }
     }
 
@@ -118,9 +116,9 @@ public abstract class Enemy : NetworkBehaviour
         Vector2 direction = (PlayerTransform.position - transform.position).normalized;
         float distanceToPlayer = Vector2.Distance(transform.position, PlayerTransform.position);
 
-      
-            RpcSetFacingDirection(direction);
-        
+
+        RpcSetFacingDirection(direction);
+
 
         if (distanceToPlayer > AttackRange)
         {
@@ -148,18 +146,9 @@ public abstract class Enemy : NetworkBehaviour
 
         if (Vector2.Distance(transform.position, PlayerTransform.position) <= AttackRange && AttackCooldown <= 0)
         {
-            IsAttacking = true;
+            IsAttackingAnimation = true;
             Attack();
             AttackCooldown = TimeAttackSpeed;
-        }
-    }
-
-    private void OnAttackChanged()
-    {
-        if (IsAttacking)
-        {
-            EnemyAnimation.PlayHit();
-            StartCoroutine(EndAttackCoroutine());
         }
     }
 
@@ -168,10 +157,10 @@ public abstract class Enemy : NetworkBehaviour
         //EnemyAnimation.PlayHit();
     }
 
-    private IEnumerator EndAttackCoroutine()
+    private IEnumerator EndAttackAnimationCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
-        IsAttacking = false;
+        IsAttackingAnimation = false;
     }
 
     protected virtual void Die()
@@ -181,6 +170,15 @@ public abstract class Enemy : NetworkBehaviour
         GetComponent<Rigidbody2D>().simulated = false;
 
         StartCoroutine(DieCoroutine());
+    }
+
+    protected void UpdateFacingDirection()
+    {
+        if (PlayerTransform != null)
+        {
+            IsFacingLeft = PlayerTransform.position.x < transform.position.x;
+            UpdateDirection();
+        }
     }
 
     private void UpdateDirection()
@@ -215,6 +213,15 @@ public abstract class Enemy : NetworkBehaviour
         return false;
     }
 
+    private void OnAttackChanged()
+    {
+        if (IsAttackingAnimation)
+        {
+            EnemyAnimation.PlayHit();
+            StartCoroutine(EndAttackAnimationCoroutine());
+        }
+    }
+
     private IEnumerator DieCoroutine()
     {
         yield return new WaitForSeconds(TimeShowDeathAnimation);
@@ -225,15 +232,6 @@ public abstract class Enemy : NetworkBehaviour
         else
         {
             Debug.LogWarning("Runner or Object is null in DieCoroutine.");
-        }
-    }
-
-    protected void UpdateFacingDirection()
-    {
-        if (PlayerTransform != null)
-        {
-            IsFacingLeft = PlayerTransform.position.x < transform.position.x;
-            UpdateDirection();
         }
     }
 

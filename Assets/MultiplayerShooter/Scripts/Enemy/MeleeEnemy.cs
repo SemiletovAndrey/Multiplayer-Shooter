@@ -11,7 +11,7 @@ public class MeleeEnemy : Enemy
     {
         base.Attack();
 
-        if (PlayerTransform.gameObject.TryGetComponent<PlayerData>(out PlayerData data))
+        if (PlayerTransform.gameObject.TryGetComponent<PlayerModel>(out PlayerModel data))
         {
             if (data.IsAlive)
             {
@@ -35,7 +35,7 @@ public class MeleeEnemy : Enemy
             if (timeInRange >= timeToDealDamage && AttackCooldown <= 0)
             {
                 Attack();
-                IsAttacking = true;
+                IsAttackingAnimation = true;
                 AttackCooldown = TimeAttackSpeed;
                 timeInRange = 0.0f;
             }

@@ -1,9 +1,13 @@
 using Fusion;
 using UnityEngine;
+using Zenject;
 
 public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
 {
+    [Inject] private PlayerDataConfig _playerConfig;
+
     [SerializeField] private NetworkPrefabRef _playerPrefab;
+    [SerializeField] private WeaponPhotonManager _weaponPhotonManager;
     [SerializeField] private PlayerAliveManager _playerAliveManager;
  
     [Networked] public NetworkDictionary<PlayerRef, NetworkObject> SpawnedCharacters => default;
@@ -30,6 +34,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % Runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             NetworkObject networkPlayer = Runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+            networkPlayer.GetComponent<PlayerModel>().Init(_playerConfig, _weaponPhotonManager, _playerAliveManager);
             SpawnedCharacters.Add(player, networkPlayer);
             _playerAliveManager.AddAliveCharacter(player, networkPlayer);
         }

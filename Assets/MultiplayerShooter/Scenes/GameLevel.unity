@@ -302,6 +302,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab:
     RawGuidValue: 8891999ff1a22da46950155ffbd72c49
+  _weaponPhotonManager: {fileID: 48413353}
   _playerAliveManager: {fileID: 149046493}
   _SpawnedCharacters:
     _items: []

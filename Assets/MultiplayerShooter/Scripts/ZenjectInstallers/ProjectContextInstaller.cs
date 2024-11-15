@@ -9,7 +9,7 @@ public class ProjectContextInstaller : MonoInstaller
     {
         Container.Bind<IInputService>().To<MobileInputService>().AsSingle();
 
-        Container.Bind<PlayerInstallConfig>().FromNew().AsSingle();
+        Container.Bind<PlayerDataConfig>().FromNew().AsSingle();
     }
     private void BindInputServices()
     {

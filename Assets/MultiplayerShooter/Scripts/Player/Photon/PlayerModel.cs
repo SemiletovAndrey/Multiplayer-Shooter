@@ -2,13 +2,10 @@ using Fusion;
 using System;
 using System.Linq;
 using UnityEngine;
-using Zenject;
+using UnityEngine.Rendering;
 
 public class PlayerModel : NetworkBehaviour
 {
-    //TO DO Don't inject
-    [Inject] private PlayerInstallConfig _playerInstallConfig;
-
     [SerializeField] private Transform[] _skins;
     [SerializeField] private Weapon[] _weapons;
     [SerializeField] private PlayerAnimation _playerAnimation;
@@ -20,7 +17,8 @@ public class PlayerModel : NetworkBehaviour
     private bool _isAlive;
 
     private WeaponPhotonManager _weaponPhotonManager;
-
+    private PlayerDataConfig _playerDataConfig;
+    private PlayerAliveManager _aliveManager;
     [Networked] public string Nickname { get; set; }
     [Networked, OnChangedRender(nameof(OnHealthChangedMethod))]
     public int CurrentHP
@@ -51,7 +49,9 @@ public class PlayerModel : NetworkBehaviour
     [Networked] public int ActiveSkinIndex { get; set; }
     [Networked] private int ActiveWeaponIndex { get; set; }
     [Networked, HideInInspector] public int AllDamage { get; set; }
-    [Networked, OnChangedRender(nameof(OnIsAliveChanged)), HideInInspector] public bool IsAlive {
+    [Networked, OnChangedRender(nameof(OnIsAliveChanged)), HideInInspector]
+    public bool IsAlive
+    {
         get => _isAlive;
         set
         {
@@ -73,17 +73,29 @@ public class PlayerModel : NetworkBehaviour
     {
         base.Spawned();
 
-        _weaponPhotonManager = FindObjectOfType<WeaponPhotonManager>();
         if (Object.HasStateAuthority)
         {
-            Nickname = _playerInstallConfig.NicknamePlayer;
             CurrentHP = MaxHP;
             Kills = 0;
-            int randomIndexCharacter = _playerInstallConfig.IndexSkin;
-            int randomIndexWeapon = _weaponPhotonManager.AssignUniqueWeaponIndex(Object.InputAuthority);
-            ActiveSkinIndex = randomIndexCharacter;
-            ActiveWeaponIndex = randomIndexWeapon;
+
             IsAlive = true;
+        }
+    }
+
+    public void Init(PlayerDataConfig playerDataConfig, WeaponPhotonManager weaponPhotonManager, PlayerAliveManager playerAliveManager)
+    {
+        _playerDataConfig = playerDataConfig;
+        _weaponPhotonManager = weaponPhotonManager;
+        _aliveManager = playerAliveManager;
+        if (Object.HasStateAuthority)
+        {
+            Nickname = _playerDataConfig.NicknamePlayer;
+            int randomIndexCharacter = _playerDataConfig.IndexSkin;
+            ActiveSkinIndex = randomIndexCharacter;
+
+            int randomIndexWeapon = _weaponPhotonManager.AssignUniqueWeaponIndex(Object.InputAuthority);
+            ActiveWeaponIndex = randomIndexWeapon;
+
         }
         SetActiveSkin(ActiveSkinIndex);
         SetActiveWeapon(ActiveWeaponIndex);
@@ -106,13 +118,10 @@ public class PlayerModel : NetworkBehaviour
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
         IsAlive = false;
 
-        var aliveManager = FindObjectOfType<PlayerAliveManager>();
-        if (aliveManager != null && Runner.IsServer)
+        if (_aliveManager != null && Runner.IsServer)
         {
-            // Remove the dead player from the list of alive characters on the server
-            aliveManager.OnPlayerDeath(Object.InputAuthority);
+            _aliveManager.OnPlayerDeath(Object.InputAuthority);
 
-            // Broadcast the death to all clients
             RPC_HandleDeath(Object.InputAuthority);
         }
     }
@@ -171,8 +180,7 @@ public class PlayerModel : NetworkBehaviour
     {
         if (Object.InputAuthority == deadPlayerRef)
         {
-            var aliveManager = FindObjectOfType<PlayerAliveManager>();
-            var nextAlivePlayer = aliveManager?.AliveCharacters
+            var nextAlivePlayer = _aliveManager?.AliveCharacters
                 .Where(entry => entry.Key != Object.InputAuthority)
                 .Select(entry => entry.Value)
                 .FirstOrDefault();

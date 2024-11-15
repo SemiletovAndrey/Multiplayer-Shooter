@@ -10,11 +10,17 @@ using Zenject;
 
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
-    private NetworkRunner _runner;
-
+    [Inject] private PlayerDataConfig _playerDataConfig;
     [Inject] private IInputService _inputService;
 
-    [SerializeField] private PlayerSpawner _playerSpawner;
+    [SerializeField] private GameObject _loadingContainer;
+    private NetworkRunner _runner;
+
+    private void Start()
+    {
+        //_loadingContainer.SetActive(true);
+        //StartGame(_playerDataConfig.gameMode);
+    }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
@@ -65,6 +71,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
+        _loadingContainer.SetActive(false);
     }
 
     private void OnGUI()
@@ -84,11 +91,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        
+
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-       
+
     }
 }

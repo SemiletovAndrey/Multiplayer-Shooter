@@ -2,12 +2,15 @@ using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class UIPhotonManager : NetworkBehaviour
 {
     [SerializeField] private GameObject _playerControllerUI;
     [SerializeField] private PlayerInfoUI _playerInfoUI;
     [SerializeField] private PlayerSpawner _playerSpawner;
+    [SerializeField] private BasicSpawner _spawner;
+
 
     public override void Spawned()
     {

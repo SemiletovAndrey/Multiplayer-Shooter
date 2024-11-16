@@ -13,13 +13,15 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     [Inject] private PlayerDataConfig _playerDataConfig;
     [Inject] private IInputService _inputService;
 
+    public PlayerDataConfig PlayerDataConfig { get { return _playerDataConfig; } }
+
     [SerializeField] private GameObject _loadingContainer;
     private NetworkRunner _runner;
 
     private void Start()
     {
-        //_loadingContainer.SetActive(true);
-        //StartGame(_playerDataConfig.gameMode);
+        _loadingContainer.SetActive(true);
+        StartGame(_playerDataConfig.gameMode);
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -74,19 +76,13 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         _loadingContainer.SetActive(false);
     }
 
-    private void OnGUI()
+    public void ExitGame()
     {
-        if (_runner == null)
+        if (_runner != null)
         {
-            if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
-            {
-                StartGame(GameMode.Host);
-            }
-            if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
-            {
-                StartGame(GameMode.Client);
-            }
+            _runner.Shutdown();
         }
+        SceneManager.LoadScene("Lobby");
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)

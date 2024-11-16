@@ -36,7 +36,7 @@ public class PlayerAliveManager : NetworkBehaviour
         if (Object.HasStateAuthority)
         {
             Debug.Log("Die player");
-            DiePlayerRpc();
+            OnPlayerDeath(Object.InputAuthority);
             CheckAndFollowNextAlivePlayer();
         }
     }
@@ -53,7 +53,7 @@ public class PlayerAliveManager : NetworkBehaviour
         }
     }
 
-    private void RemovePlayerFromDictionary(PlayerRef playerRef)
+    public void RemovePlayerFromDictionary(PlayerRef playerRef)
     {
         if (AliveCharacters.ContainsKey(playerRef))
         {

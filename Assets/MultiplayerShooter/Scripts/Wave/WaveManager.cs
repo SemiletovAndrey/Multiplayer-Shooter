@@ -12,6 +12,14 @@ public class WaveManager : NetworkBehaviour
 
     [SerializeField] private GameOverManager _deathUI;
 
+    private float _timeWave;
+    private string _waveStatus;
+    private int currentWaveIndex = 0;
+    private const float DelayWindowGameOver = 5f;
+
+    public event Action<float> OnTimeChanged;
+    public event Action<string> OnStatusChanged;
+
     [Networked, OnChangedRender(nameof(OnTimeChangedMethod)), HideInInspector]
     public float TimeWave
     {
@@ -39,15 +47,6 @@ public class WaveManager : NetworkBehaviour
             }
         }
     }
-
-    public event Action<float> OnTimeChanged;
-    public event Action<string> OnStatusChanged;
-
-    private float _timeWave;
-    private string _waveStatus;
-    private int currentWaveIndex = 0;
-    private const float DelayWindowGameOver = 5f;
-
 
     public override void Spawned()
     {
@@ -91,15 +90,22 @@ public class WaveManager : NetworkBehaviour
         WaveStatus = "All waves completed!";
 
         yield return new WaitForSeconds(DelayWindowGameOver);
-        _deathUI.gameObject.SetActive(true);
+        RPC_ShowGameOverUI();
     }
 
     private void OnTimeChangedMethod()
     {
         OnTimeChanged?.Invoke(TimeWave);
     }
+
     private void OnStatusChangedMethod()
     {
         OnStatusChanged?.Invoke(WaveStatus);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_ShowGameOverUI()
+    {
+        _deathUI.gameObject.SetActive(true);
     }
 }

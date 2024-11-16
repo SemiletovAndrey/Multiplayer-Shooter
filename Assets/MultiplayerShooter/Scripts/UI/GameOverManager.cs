@@ -10,6 +10,7 @@ public class GameOverManager : MonoBehaviour
 
     [SerializeField] private PlayerSpawner _playerSpawner;
     [SerializeField] private PlayerAliveManager _playerAliveManager;
+    [SerializeField] private WaveManager _waveManager;
 
     private Dictionary<PlayerRef, NetworkObject> _allPlayer = new Dictionary<PlayerRef, NetworkObject>();
 
@@ -50,5 +51,6 @@ public class GameOverManager : MonoBehaviour
     public void OnGameOver(Dictionary<PlayerRef, NetworkObject> allPlayers, PlayerAliveManager playerAliveManager)
     {
         ShowGameOverUI(allPlayers);
+        _waveManager.gameObject.SetActive(false);
     }
 }

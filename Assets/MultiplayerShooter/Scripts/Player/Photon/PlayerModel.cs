@@ -2,7 +2,6 @@ using Fusion;
 using System;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class PlayerModel : NetworkBehaviour
 {
@@ -16,9 +15,14 @@ public class PlayerModel : NetworkBehaviour
     private int _kills;
     private bool _isAlive;
 
-    private WeaponPhotonManager _weaponPhotonManager;
     private PlayerDataConfig _playerDataConfig;
+    private WeaponPhotonManager _weaponPhotonManager;
     private PlayerAliveManager _aliveManager;
+
+    public event Action<int, int> OnHealthChanged;
+    public event Action<int> OnKillCountChanged;
+    public event Action OnDeathPlayer;
+
     [Networked] public string Nickname { get; set; }
     [Networked, OnChangedRender(nameof(OnHealthChangedMethod))]
     public int CurrentHP
@@ -46,8 +50,8 @@ public class PlayerModel : NetworkBehaviour
             }
         }
     }
-    [Networked] public int ActiveSkinIndex { get; set; }
-    [Networked] private int ActiveWeaponIndex { get; set; }
+    [Networked, OnChangedRender(nameof(OnSkinIndexChanged))] public int ActiveSkinIndex { get; set; }
+    [Networked] public int ActiveWeaponIndex { get; set; }
     [Networked, HideInInspector] public int AllDamage { get; set; }
     [Networked, OnChangedRender(nameof(OnIsAliveChanged)), HideInInspector]
     public bool IsAlive
@@ -61,42 +65,39 @@ public class PlayerModel : NetworkBehaviour
                 OnDeathPlayer?.Invoke();
             }
         }
-    }
+    } 
     [Networked, HideInInspector] public Weapon ActiveWeapon { get; set; }
-
-    public event Action<int, int> OnHealthChanged;
-    public event Action<int> OnKillCountChanged;
-    public event Action OnDeathPlayer;
-
 
     public override void Spawned()
     {
         base.Spawned();
+        if (Object.InputAuthority == Runner.LocalPlayer)
+        {
+            _playerDataConfig = FindObjectOfType<PlayerDataConfigMD>()?.PlayerDataConfig;
+
+            if (_playerDataConfig != null)
+            {
+                if (Object.HasStateAuthority)
+                {
+                    InitializePlayerData();
+                }
+                else
+                {
+                    RPC_SetNickname(_playerDataConfig.NicknamePlayer, _playerDataConfig.IndexSkin);
+                }
+            }
+        }
 
         if (Object.HasStateAuthority)
         {
-            CurrentHP = MaxHP;
-            Kills = 0;
+            if (!IsAlive)
+            {
+                IsAlive = true;
+            }
 
-            IsAlive = true;
+            AssignUniqueWeapon();
         }
-    }
 
-    public void Init(PlayerDataConfig playerDataConfig, WeaponPhotonManager weaponPhotonManager, PlayerAliveManager playerAliveManager)
-    {
-        _playerDataConfig = playerDataConfig;
-        _weaponPhotonManager = weaponPhotonManager;
-        _aliveManager = playerAliveManager;
-        if (Object.HasStateAuthority)
-        {
-            Nickname = _playerDataConfig.NicknamePlayer;
-            int randomIndexCharacter = _playerDataConfig.IndexSkin;
-            ActiveSkinIndex = randomIndexCharacter;
-
-            int randomIndexWeapon = _weaponPhotonManager.AssignUniqueWeaponIndex(Object.InputAuthority);
-            ActiveWeaponIndex = randomIndexWeapon;
-
-        }
         SetActiveSkin(ActiveSkinIndex);
         SetActiveWeapon(ActiveWeaponIndex);
     }
@@ -115,6 +116,7 @@ public class PlayerModel : NetworkBehaviour
     public void Die()
     {
         if (!Object.HasStateAuthority) return;
+        _aliveManager = FindObjectOfType<PlayerAliveManager>();
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
         IsAlive = false;
 
@@ -195,21 +197,26 @@ public class PlayerModel : NetworkBehaviour
                     {
                         cameraFollower.CameraFollow(nextAlivePlayer.transform);
                     }
-                    else
-                    {
-                        Debug.LogWarning("CameraFollower component not found on the main camera.");
-                    }
                 }
-                else
-                {
-                    Debug.LogWarning("Main camera not found.");
-                }
-            }
-            else
-            {
-                Debug.Log("No other live players available to switch the camera.");
             }
         }
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_SetNickname(string nickname, int activeSkinIndex)
+    {
+        Nickname = nickname;
+        ActiveSkinIndex = activeSkinIndex;
+        CurrentHP = MaxHP;
+        IsAlive = true;
+    }
+
+    private void InitializePlayerData()
+    {
+        Nickname = _playerDataConfig.NicknamePlayer;
+        CurrentHP = MaxHP;
+        IsAlive = true;
+        ActiveSkinIndex = _playerDataConfig.IndexSkin;
     }
 
     private void OnHealthChangedMethod()
@@ -239,10 +246,31 @@ public class PlayerModel : NetworkBehaviour
         }
     }
 
+    private void AssignUniqueWeapon()
+    {
+        _weaponPhotonManager = FindObjectOfType<WeaponPhotonManager>();
+
+        if (_weaponPhotonManager != null && Object.HasStateAuthority)
+        {
+            int assignedWeaponIndex = _weaponPhotonManager.AssignUniqueWeaponIndex(Object.InputAuthority);
+
+            if (assignedWeaponIndex >= 0)
+            {
+                ActiveWeaponIndex = assignedWeaponIndex;
+                SetActiveWeapon(ActiveWeaponIndex);
+            }
+        }
+    }
+
     private void OnIsAliveChanged()
     {
         HandleDeath();
         OnDeathPlayer?.Invoke();
+    }
+
+    private void OnSkinIndexChanged()
+    {
+        SetActiveSkin(ActiveSkinIndex);
     }
 
     private void HandleDeath()

@@ -14,10 +14,7 @@ public class LobbyManager : MonoBehaviour
 
     private void Start()
     {
-        string nick = PlayerPrefs.GetString("Nickname");
         int indexSkin = PlayerPrefs.GetInt("IndexSkin");
-        _inputField.text = nick;
-        _playerDataConfig.NicknamePlayer = nick;
         _playerDataConfig.IndexSkin = indexSkin;
     }
 }

@@ -25,7 +25,7 @@ public class LobbyUIManager : MonoBehaviour
     {
         if (_inputField != null)
         {
-            _inputField.onEndEdit.AddListener(OnInputFieldChanged);
+            _inputField.onValueChanged.AddListener(OnInputFieldChanged);
         }
     }
 
@@ -33,7 +33,7 @@ public class LobbyUIManager : MonoBehaviour
     {
         if (_inputField != null)
         {
-            _inputField.onEndEdit.RemoveListener(OnInputFieldChanged);
+            _inputField.onValueChanged.RemoveListener(OnInputFieldChanged);
         }
     }
 
@@ -72,7 +72,7 @@ public class LobbyUIManager : MonoBehaviour
         _playerDataConfig.IndexSkin = _skinIndex;
         _startWindow.SetActive(true);
         _changeSkinWindow.SetActive(false);
-        PlayerPrefs.SetInt("Nickname", _skinIndex);
+        PlayerPrefs.SetInt("IndexSkin", _skinIndex);
     }
 
     public void SetSkin(int skinIndex)
@@ -87,7 +87,6 @@ public class LobbyUIManager : MonoBehaviour
 
     private void OnInputFieldChanged(string newText)
     {
-        PlayerPrefs.SetString("Nickname", newText);
         _playerDataConfig.NicknamePlayer = newText;
     }
 

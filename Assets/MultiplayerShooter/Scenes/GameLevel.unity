@@ -304,6 +304,7 @@ MonoBehaviour:
     RawGuidValue: 8891999ff1a22da46950155ffbd72c49
   _weaponPhotonManager: {fileID: 48413353}
   _playerAliveManager: {fileID: 149046493}
+  _playerDataConfigMD: {fileID: 731767766}
   _SpawnedCharacters:
     _items: []
 --- !u!4 &68540225
@@ -70932,6 +70933,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1780560608}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &731767765
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 731767767}
+  - component: {fileID: 731767766}
+  m_Layer: 0
+  m_Name: PlayerDataConfig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &731767766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731767765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1424f9de8c585d54ea12489ded9f9123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerDataConfig:
+    NicknamePlayer: John
+    IndexSkin: 1
+    gameMode: 0
+--- !u!4 &731767767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731767765}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 424.42535, y: 616.75366, z: 501.15552}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &768846779 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 620447467054734954, guid: 655da12c2dd54bb4eb4db686e9f9d782, type: 3}
@@ -71139,6 +71188,30 @@ MonoBehaviour:
     - {fileID: -2721080268614837459, guid: 70b85d5db459ff444a40c5a60192b403, type: 3}
     ItemType:
     - {fileID: 8497286123979239563, guid: 045f29cc00047084890bfd39e008da29, type: 3}
+  - WaveDuration: 60
+    TimeBetweenWaves: 20
+    SpawnIntervalEnemy: 5
+    MinIntervalSpawn: 10
+    MaxIntervalSpawn: 20
+    EnemyTypes:
+    - {fileID: -2721080268614837459, guid: 70b85d5db459ff444a40c5a60192b403, type: 3}
+    - {fileID: 6262944665359618660, guid: 0b28f61c04ba0ca4d967b435a2bee1df, type: 3}
+    ItemType:
+    - {fileID: 8497286123979239563, guid: 045f29cc00047084890bfd39e008da29, type: 3}
+    - {fileID: 1223064683985566596, guid: 014f80d05e2e103458cbe6d2840c16ac, type: 3}
+  - WaveDuration: 90
+    TimeBetweenWaves: 30
+    SpawnIntervalEnemy: 5
+    MinIntervalSpawn: 10
+    MaxIntervalSpawn: 20
+    EnemyTypes:
+    - {fileID: -2721080268614837459, guid: 70b85d5db459ff444a40c5a60192b403, type: 3}
+    - {fileID: 6262944665359618660, guid: 0b28f61c04ba0ca4d967b435a2bee1df, type: 3}
+    - {fileID: 7477771257993095179, guid: d77f36f93a1e28d499f4c337fa10db2b, type: 3}
+    ItemType:
+    - {fileID: 8497286123979239563, guid: 045f29cc00047084890bfd39e008da29, type: 3}
+    - {fileID: 1223064683985566596, guid: 014f80d05e2e103458cbe6d2840c16ac, type: 3}
+    - {fileID: -389266242174809308, guid: 7e3a28deb6c53a446b3b17b5434dd1d0, type: 3}
   _enemySpawner: {fileID: 1768962820}
   _itemSpawner: {fileID: 173237939}
   _deathUI: {fileID: 768846780}
@@ -71440,6 +71513,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4875923811140621110, guid: 655da12c2dd54bb4eb4db686e9f9d782, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1836926752}
     - target: {fileID: 5762484542859524929, guid: 655da12c2dd54bb4eb4db686e9f9d782, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -71520,6 +71597,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7881739861852961685, guid: 655da12c2dd54bb4eb4db686e9f9d782, type: 3}
+      propertyPath: _waveManager
+      value: 
+      objectReference: {fileID: 1200363954}
     - target: {fileID: 7881739861852961685, guid: 655da12c2dd54bb4eb4db686e9f9d782, type: 3}
       propertyPath: _playerSpawner
       value: 
@@ -71879,3 +71960,4 @@ SceneRoots:
   - {fileID: 1186868767}
   - {fileID: 505685092}
   - {fileID: 792079942}
+  - {fileID: 731767767}

@@ -27,7 +27,6 @@ public class UIPhotonManager : NetworkBehaviour
         SpawnedContext();
     }
 
-    [ContextMenu("Spawned check")]
     public void SpawnedContext()
     {
         InitializeLocalPlayerUI(Runner.LocalPlayer);

@@ -4,11 +4,10 @@ using Zenject;
 
 public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
 {
-    [Inject] private PlayerDataConfig _playerConfig;
-
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private WeaponPhotonManager _weaponPhotonManager;
     [SerializeField] private PlayerAliveManager _playerAliveManager;
+    [SerializeField] private PlayerDataConfigMD _playerDataConfigMD;
  
     [Networked] public NetworkDictionary<PlayerRef, NetworkObject> SpawnedCharacters => default;
 
@@ -34,7 +33,6 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
         {
             Vector3 spawnPosition = new Vector3((player.RawEncoded % Runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             NetworkObject networkPlayer = Runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-            networkPlayer.GetComponent<PlayerModel>().Init(_playerConfig, _weaponPhotonManager, _playerAliveManager);
             SpawnedCharacters.Add(player, networkPlayer);
             _playerAliveManager.AddAliveCharacter(player, networkPlayer);
         }
@@ -48,6 +46,7 @@ public class PlayerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
             Runner.Despawn(networkObject);
             SpawnedCharacters.Remove(player);
             _playerAliveManager.AliveCharacters.Remove(player);
+            _weaponPhotonManager.PlayerLeft(player);
         }
     }
 }

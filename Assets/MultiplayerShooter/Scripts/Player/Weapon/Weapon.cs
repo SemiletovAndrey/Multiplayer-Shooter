@@ -21,7 +21,6 @@ public abstract class Weapon : NetworkBehaviour
 
     public event Action<int, int> OnAmmoChanged;
 
-
     [Networked, OnChangedRender(nameof(OnAmmoCountChangedMethod))] 
     protected int CurrentAmmo
     {
@@ -35,7 +34,6 @@ public abstract class Weapon : NetworkBehaviour
             }
         }
     }
-
     public float BulletLifetime => bulletLifetime;
     public int Damage => damage;
     public int BulletsPerShot => bulletsPerShot;
@@ -59,9 +57,14 @@ public abstract class Weapon : NetworkBehaviour
 
         if (CanShoot())
         {
-            CurrentAmmo -= BulletsPerShot;
-
-            for (int i = 0; i < bulletsPerShot; i++)
+            int bulletsCountPerShot = BulletsPerShot;
+            if(CurrentAmmo < BulletsPerShot)
+            {
+                bulletsCountPerShot = CurrentAmmo;
+            }
+            CurrentAmmo = Mathf.Clamp(CurrentAmmo - bulletsCountPerShot, 0, MaxAmmo);
+            
+            for (int i = 0; i < bulletsCountPerShot; i++)
             {
                 float spreadAngle = aimAngle + GetSpreadAngle(i);
                 SpawnBullet(spreadAngle);
@@ -73,11 +76,6 @@ public abstract class Weapon : NetworkBehaviour
     public void AddAmmo(int ammo)
     {
         CurrentAmmo = Mathf.Clamp(CurrentAmmo + ammo, 0, MaxAmmo);
-    }
-
-    private bool CanShoot()
-    {
-        return Time.time >= _lastShootTime + shootCooldown;
     }
 
     protected virtual float GetSpreadAngle(int bulletIndex)
@@ -96,6 +94,12 @@ public abstract class Weapon : NetworkBehaviour
                 Damage, BulletLifetime, PlayerModel);
         }
     }
+
+    private bool CanShoot()
+    {
+        return Time.time >= _lastShootTime + shootCooldown;
+    }
+
     private void OnAmmoCountChangedMethod()
     {
         OnAmmoChanged?.Invoke(Ammo,MaxAmmo);

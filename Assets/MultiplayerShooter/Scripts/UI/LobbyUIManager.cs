@@ -12,7 +12,6 @@ public class LobbyUIManager : MonoBehaviour
 {
     [Inject] private PlayerDataConfig _playerDataConfig;
 
-    [SerializeField] private LobbySpawner _lobbySpawner;
     [SerializeField] private GameObject _startWindow;
     [SerializeField] private GameObject _changeSkinWindow;
     [SerializeField] private GameObject _lobbyWindow;

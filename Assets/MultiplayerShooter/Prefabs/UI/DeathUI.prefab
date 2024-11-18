@@ -222,13 +222,14 @@ GameObject:
   - component: {fileID: 6998136977487779793}
   - component: {fileID: 6286930483724945613}
   - component: {fileID: 7881739861852961685}
+  - component: {fileID: 5432700983212780667}
   m_Layer: 5
   m_Name: DeathUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5762484542859524929
 RectTransform:
   m_ObjectHideFlags: 0
@@ -327,8 +328,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerDeathUIPrefab: {fileID: 3800903803594668485, guid: 9bf6f75ec33d52341aedef3b45d20003, type: 3}
   playerListContainer: {fileID: 8853558508175682774}
+  _runner: {fileID: 5432700983212780667}
   _playerSpawner: {fileID: 0}
   _playerAliveManager: {fileID: 0}
+  _waveManager: {fileID: 0}
+--- !u!114 &5432700983212780667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 620447467054734954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1199893898, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &688436393722347619
 GameObject:
   m_ObjectHideFlags: 0
@@ -855,9 +870,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BasicSpawner, Assembly-CSharp
-        m_MethodName: ExitGame
+      - m_Target: {fileID: 7881739861852961685}
+        m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
+        m_MethodName: ExitInMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

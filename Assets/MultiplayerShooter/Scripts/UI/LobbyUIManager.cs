@@ -14,7 +14,6 @@ public class LobbyUIManager : MonoBehaviour
 
     [SerializeField] private GameObject _startWindow;
     [SerializeField] private GameObject _changeSkinWindow;
-    [SerializeField] private GameObject _lobbyWindow;
     [SerializeField] private GameObject _loadingWindow;
     [SerializeField] private Button _startGameButton;
     [SerializeField] private TMP_InputField _inputField;
@@ -47,25 +46,21 @@ public class LobbyUIManager : MonoBehaviour
     public void CreateRoom()
     {
         _startWindow.SetActive(false);
-        _lobbyWindow.SetActive(true);
         _playerDataConfig.gameMode = GameMode.Host;
-
-        _startGameButton.onClick.AddListener(StartGameHost);
+        StartGameHost();
     }
     
     public void JoinRoom()
     {
         _startWindow.SetActive(false);
-        _lobbyWindow.SetActive(true);
         _playerDataConfig.gameMode = GameMode.Client;
-        _startGameButton.onClick.AddListener(StartGameHost);
+        StartGameHost();
     }
 
     public void BackStartMenu()
     {
         _startWindow.SetActive(true);
         _changeSkinWindow.SetActive(false);
-        _lobbyWindow.SetActive(false);
     }
 
     public void ChoseSkin()
@@ -89,6 +84,8 @@ public class LobbyUIManager : MonoBehaviour
     private void OnInputFieldChanged(string newText)
     {
         _playerDataConfig.NicknamePlayer = newText;
+        PlayerPrefs.SetString("Nickname", newText);
+
     }
 
     private void StartGameHost()

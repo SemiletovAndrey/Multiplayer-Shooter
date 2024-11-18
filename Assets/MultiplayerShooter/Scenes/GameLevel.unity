@@ -71218,11 +71218,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waves:
-  - WaveDuration: 5
-    TimeBetweenWaves: 2
+  - WaveDuration: 35
+    TimeBetweenWaves: 10
     SpawnIntervalEnemy: 5
     MinIntervalSpawn: 10
     MaxIntervalSpawn: 20
+    EnemyTypes:
+    - {fileID: -2721080268614837459, guid: 70b85d5db459ff444a40c5a60192b403, type: 3}
+    ItemType:
+    - {fileID: 8497286123979239563, guid: 045f29cc00047084890bfd39e008da29, type: 3}
+  - WaveDuration: 60
+    TimeBetweenWaves: 20
+    SpawnIntervalEnemy: 5
+    MinIntervalSpawn: 10
+    MaxIntervalSpawn: 20
+    EnemyTypes:
+    - {fileID: -2721080268614837459, guid: 70b85d5db459ff444a40c5a60192b403, type: 3}
+    - {fileID: 6262944665359618660, guid: 0b28f61c04ba0ca4d967b435a2bee1df, type: 3}
+    ItemType:
+    - {fileID: 8497286123979239563, guid: 045f29cc00047084890bfd39e008da29, type: 3}
+    - {fileID: 1223064683985566596, guid: 014f80d05e2e103458cbe6d2840c16ac, type: 3}
+  - WaveDuration: 90
+    TimeBetweenWaves: 30
+    SpawnIntervalEnemy: 5
+    MinIntervalSpawn: 8
+    MaxIntervalSpawn: 18
     EnemyTypes:
     - {fileID: -2721080268614837459, guid: 70b85d5db459ff444a40c5a60192b403, type: 3}
     - {fileID: 6262944665359618660, guid: 0b28f61c04ba0ca4d967b435a2bee1df, type: 3}

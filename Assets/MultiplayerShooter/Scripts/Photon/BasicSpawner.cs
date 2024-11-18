@@ -16,11 +16,13 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public PlayerDataConfig PlayerDataConfig { get { return _playerDataConfig; } }
 
     [SerializeField] private GameObject _loadingContainer;
+    [SerializeField] private GameObject _shutdownErrorContainer;
     private NetworkRunner _runner;
 
     private void Start()
     {
         _loadingContainer.SetActive(true);
+        _shutdownErrorContainer.SetActive(false);
         StartGame(_playerDataConfig.gameMode);
     }
 
@@ -36,7 +38,18 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         input.Set(data);
     }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
-    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
+    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+    {
+        Debug.Log($"Error connection{shutdownReason}");
+        if (shutdownReason == ShutdownReason.DisconnectedByPluginLogic)
+        {
+            ExitGame();
+        }
+        else
+        {
+            _shutdownErrorContainer.SetActive(true);
+        }
+    }
     public void OnConnectedToServer(NetworkRunner runner) { }
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
@@ -78,20 +91,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void ExitGame()
     {
-        if (_runner != null)
-        {
-            _runner.Shutdown();
-        }
         SceneManager.LoadScene("Lobby");
     }
 
-    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {
+    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
 
-    }
+    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
 
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
-    {
-
-    }
 }

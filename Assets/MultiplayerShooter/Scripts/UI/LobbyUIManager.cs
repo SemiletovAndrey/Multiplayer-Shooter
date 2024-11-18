@@ -1,13 +1,14 @@
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Zenject;
 
-public class LobbyUIManager : MonoBehaviour
+public class LobbyUIManager : MonoBehaviour  
 {
     [Inject] private PlayerDataConfig _playerDataConfig;
 
@@ -20,6 +21,7 @@ public class LobbyUIManager : MonoBehaviour
     [SerializeField] private TMP_InputField _inputField;
 
     private int _skinIndex;
+    private NetworkRunner _runner;
 
     private void Start()
     {

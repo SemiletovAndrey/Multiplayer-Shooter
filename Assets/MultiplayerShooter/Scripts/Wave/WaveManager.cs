@@ -53,6 +53,7 @@ public class WaveManager : NetworkBehaviour
         if (Object.HasStateAuthority)
         {
             StartCoroutine(StartWaves());
+            Debug.Log("WaveSpawned");
         }
     }
 

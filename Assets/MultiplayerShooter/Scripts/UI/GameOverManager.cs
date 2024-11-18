@@ -9,7 +9,6 @@ public class GameOverManager : NetworkBehaviour
     [SerializeField] private GameObject playerDeathUIPrefab;
     [SerializeField] private Transform playerListContainer;
 
-    [SerializeField] private NetworkRunner _runner;
     [SerializeField] private PlayerSpawner _playerSpawner;
     [SerializeField] private PlayerAliveManager _playerAliveManager;
     [SerializeField] private WaveManager _waveManager;

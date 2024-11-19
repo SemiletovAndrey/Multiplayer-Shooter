@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2462385731132045910}
   - component: {fileID: 1803832676337625928}
   - component: {fileID: 5801100260425562815}
+  - component: {fileID: 3504679838788067897}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -125,6 +126,20 @@ MonoBehaviour:
   SyncSettings: 79
   StateHashes: 00000000e723af300941674566a10b3a88c3c34fc8254f48d522880f89dca0cd5777e1ae
   TriggerHashes: 00000000086e87fe
+--- !u!114 &3504679838788067897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2120646716479537018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baf8a193128057b49b0abd972de5969f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 1803832676337625928}
+  _enemy: {fileID: 7477771257993095179}
 --- !u!1001 &6071126376781711981
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -148,15 +163,15 @@ PrefabInstance:
     - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: NetworkedBehaviours.Array.data[1]
       value: 
-      objectReference: {fileID: 7063498331350082333}
+      objectReference: {fileID: 7477771257993095179}
     - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: NetworkedBehaviours.Array.data[2]
       value: 
-      objectReference: {fileID: 7477771257993095179}
+      objectReference: {fileID: 5801100260425562815}
     - target: {fileID: 3897005953526105214, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: NetworkedBehaviours.Array.data[3]
       value: 
-      objectReference: {fileID: 5801100260425562815}
+      objectReference: {fileID: 3504679838788067897}
     - target: {fileID: 4733415543663867495, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
       propertyPath: _interpolationTarget
       value: 
@@ -243,21 +258,10 @@ MonoBehaviour:
   Damage: 6
   Speed: 0.6
   TimeAttackSpeed: 2
-  TimeAttack: 0
   AttackRange: 1.5
   _visualObject: {fileID: 7608976715905806936}
-  EnemyAnimation: {fileID: 7063498331350082333}
-  detectionRadius: 10
+  EnemyAnimation: {fileID: 3504679838788067897}
+  detectionRadius: 40
   _IsDead: 0
+  _IsAttackingAnimation: 0
   timeToDealDamage: 1
---- !u!114 &7063498331350082333 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -5312436626306389648, guid: fbc1f2d551e9da24286926cd694df1bc, type: 3}
-  m_PrefabInstance: {fileID: 6071126376781711981}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4378996834854380093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: baf8a193128057b49b0abd972de5969f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

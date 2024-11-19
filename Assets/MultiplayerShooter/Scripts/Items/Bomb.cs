@@ -43,6 +43,5 @@ public class Bomb : Item
     {
         yield return new WaitForSeconds(ShowBombShadow);
         Runner.Despawn(Object);
-
     }
 }

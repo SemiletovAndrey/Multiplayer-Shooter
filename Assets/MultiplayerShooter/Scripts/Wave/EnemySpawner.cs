@@ -13,7 +13,7 @@ public class EnemySpawner : NetworkBehaviour
     private List<Enemy> _enemyTypes;
     private Coroutine _spawnCoroutine;
 
-    private List<Enemy> _enemies = new List<Enemy>();
+    private List<NetworkObject> _enemies = new List<NetworkObject>();
 
 
     public void InitializeWave(float spawnInterval, List<Enemy> enemyTypes)
@@ -53,7 +53,8 @@ public class EnemySpawner : NetworkBehaviour
         var playerTransform = GetRandomPlayerTransform();
         if (playerTransform != null)
         {
-            Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
+            Vector2 spawnPosition = GetRandomPositionAroundPlayer(playerTransform.position, _minimalSpawnRadius, _spawnRadius);
+            //Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
 
             int randomEnemyIndex = Random.Range(0, _enemyTypes.Count);
             GameObject enemyPrefab = _enemyTypes[randomEnemyIndex].gameObject;
@@ -63,10 +64,31 @@ public class EnemySpawner : NetworkBehaviour
                 NetworkObject enemyObject = Runner.Spawn(enemyPrefab, spawnPosition, Quaternion.identity);
                 Enemy enemy = enemyObject.GetComponent<Enemy>();
 
-                _enemies.Add(enemy);
+                _enemies.Add(enemyObject);
 
             }
         }
+    }
+
+    public void DeleteAllEnemies()
+    {
+        for (int i = 0; i < _enemies.Count; i++)
+        {
+            Runner.Despawn(_enemies[i]);
+            _enemies.RemoveAt(i);
+        }
+    }
+
+    private Vector2 GetRandomPositionAroundPlayer(Vector2 center, float minRadius, float maxRadius)
+    {
+        float angle = Random.Range(0f, Mathf.PI * 2); // Случайный угол в радианах
+        float radius = Random.Range(minRadius, maxRadius); // Случайное расстояние в пределах заданного диапазона
+
+        // Вычисляем смещение по оси X и Y
+        float offsetX = Mathf.Cos(angle) * radius;
+        float offsetY = Mathf.Sin(angle) * radius;
+
+        return center + new Vector2(offsetX, offsetY);
     }
 
     private Transform GetRandomPlayerTransform()

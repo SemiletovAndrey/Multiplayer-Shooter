@@ -16,11 +16,13 @@ public class MeleeEnemy : Enemy
             if (data.IsAlive)
             {
                 data.TakeDamage(Damage);
+                IsAttackingAnimation = true;
             }
             else
             {
                 PlayerTransform = null;
             }
+
         }
     }
 

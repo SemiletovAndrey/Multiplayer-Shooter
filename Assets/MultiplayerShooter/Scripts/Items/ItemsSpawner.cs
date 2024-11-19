@@ -54,7 +54,8 @@ public class ItemsSpawner : NetworkBehaviour
         var playerTransform = GetRandomPlayerTransform();
         if (playerTransform != null)
         {
-        Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
+            Vector2 spawnPosition = GetRandomPositionAroundPlayer(playerTransform.position, _minimalSpawnRadius, _spawnRadius);
+        //Vector2 spawnPosition = (Vector2)playerTransform.position + new Vector2(_minimalSpawnRadius, _minimalSpawnRadius) + Random.insideUnitCircle * _spawnRadius;
 
         int randomEnemyIndex = Random.Range(0, _itemsType.Count);
         GameObject enemyPrefab = _itemsType[randomEnemyIndex].gameObject;
@@ -68,6 +69,19 @@ public class ItemsSpawner : NetworkBehaviour
 
             }
         }
+    }
+
+
+    private Vector2 GetRandomPositionAroundPlayer(Vector2 center, float minRadius, float maxRadius)
+    {
+        float angle = Random.Range(0f, Mathf.PI * 2); // Случайный угол в радианах
+        float radius = Random.Range(minRadius, maxRadius); // Случайное расстояние в пределах заданного диапазона
+
+        // Вычисляем смещение по оси X и Y
+        float offsetX = Mathf.Cos(angle) * radius;
+        float offsetY = Mathf.Sin(angle) * radius;
+
+        return center + new Vector2(offsetX, offsetY);
     }
 
     private Transform GetRandomPlayerTransform()

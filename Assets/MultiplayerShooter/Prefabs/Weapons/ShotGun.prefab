@@ -136,6 +136,6 @@ MonoBehaviour:
   bulletLifetime: 0.3
   damage: 6
   bulletsPerShot: 2
-  maxAmmo: 25
-  shootCooldown: 1.3
+  maxAmmo: 40
+  shootCooldown: 1.2
   spreadAngleOffset: 2

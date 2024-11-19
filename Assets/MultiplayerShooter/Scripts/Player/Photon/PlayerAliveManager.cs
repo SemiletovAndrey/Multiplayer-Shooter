@@ -90,25 +90,9 @@ public class PlayerAliveManager : NetworkBehaviour
                     if (cameraFollower != null)
                     {
                         cameraFollower.CameraFollow(playerTransform);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("CameraFollower не найден на основной камере.");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("ќсновна€ камера (Camera.main) не найдена.");
-                }
+                    }   
+                }       
             }
-            else
-            {
-                Debug.LogWarning("PlayerObject дл€ случайного живого игрока не найден.");
-            }
-        }
-        else
-        {
-            Debug.Log("Ќет доступных игроков дл€ переключени€ камеры.");
         }
     }
 }

@@ -9,13 +9,13 @@ public class WaveManager : NetworkBehaviour
     [SerializeField] private List<WaveConfig> waves;
     [SerializeField] private EnemySpawner _enemySpawner;
     [SerializeField] private ItemsSpawner _itemSpawner;
+    [SerializeField] private float DelayWindowGameOver = 2f;
 
     [SerializeField] private GameOverManager _deathUI;
 
     private float _timeWave;
     private string _waveStatus;
     private int currentWaveIndex = 0;
-    private const float DelayWindowGameOver = 5f;
 
     public event Action<float> OnTimeChanged;
     public event Action<string> OnStatusChanged;
@@ -52,8 +52,8 @@ public class WaveManager : NetworkBehaviour
     {
         if (Object.HasStateAuthority)
         {
+            WaveStatus = " ";
             StartCoroutine(StartWaves());
-            Debug.Log("WaveSpawned");
         }
     }
 
@@ -61,6 +61,7 @@ public class WaveManager : NetworkBehaviour
     {
         while (currentWaveIndex < waves.Count)
         {
+            WaveStatus = "Attack";
             WaveConfig currentWave = waves[currentWaveIndex];
             _enemySpawner.InitializeWave(currentWave.SpawnIntervalEnemy, currentWave.EnemyTypes);
             _itemSpawner.InitializeWave(currentWave.MinIntervalSpawn,currentWave.MaxIntervalSpawn, currentWave.ItemType);
@@ -68,7 +69,6 @@ public class WaveManager : NetworkBehaviour
 
 
             float timeRemaining = TimeWave;
-            WaveStatus = "Attack";
             while (timeRemaining > 0)
             {
                 timeRemaining -= Time.deltaTime;
@@ -89,6 +89,7 @@ public class WaveManager : NetworkBehaviour
             currentWaveIndex++;
         }
         WaveStatus = "All waves completed!";
+        _enemySpawner.DeleteAllEnemies();
 
         yield return new WaitForSeconds(DelayWindowGameOver);
         RPC_ShowGameOverUI();

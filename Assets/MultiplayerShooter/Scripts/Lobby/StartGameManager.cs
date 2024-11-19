@@ -42,8 +42,8 @@ public class StartGameManager : NetworkBehaviour
         _hostStartMenuUI.SetActive(false);
         _clientStartMenuUI.SetActive(false);
 
-        _waveManager.gameObject.SetActive(true);
         _itemsSpawner.gameObject.SetActive(true);
         _enemySpawner.gameObject.SetActive(true);
+        _waveManager.gameObject.SetActive(true);
     }
 }

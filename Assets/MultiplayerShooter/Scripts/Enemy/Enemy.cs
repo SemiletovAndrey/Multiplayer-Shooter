@@ -11,7 +11,6 @@ public abstract class Enemy : NetworkBehaviour
     [SerializeField] protected int Damage;
     [SerializeField] protected float Speed;
     [SerializeField] protected float TimeAttackSpeed;
-    [SerializeField] protected float TimeAttack;
     [SerializeField] protected float AttackRange;
     [SerializeField] private Transform _visualObject;
     [SerializeField] protected EnemyAnimation EnemyAnimation;
@@ -25,7 +24,7 @@ public abstract class Enemy : NetworkBehaviour
     [Networked, OnChangedRender(nameof(OnIsRunningChanged))] protected bool IsRunning { get; set; }
     [Networked, OnChangedRender(nameof(OnIsStandChanged))] protected bool IsStand { get; set; }
     [Networked, OnChangedRender(nameof(OnIsAlive))] public bool IsDead { get; set; }
-    [Networked, OnChangedRender(nameof(OnAttackChanged))] protected bool IsAttackingAnimation { get; set; }
+    [Networked, OnChangedRender(nameof(OnAttackChanged))] public bool IsAttackingAnimation { get; set; }
 
     [Networked] protected float AttackCooldown { get; set; }
 
@@ -44,6 +43,7 @@ public abstract class Enemy : NetworkBehaviour
         {
             _physicsScene = Runner.GetPhysicsScene2D();
             prevIsFaceLeft = true;
+            AttackCooldown = TimeAttackSpeed;
         }
     }
 
@@ -154,13 +154,10 @@ public abstract class Enemy : NetworkBehaviour
 
     protected virtual void Attack()
     {
-        //EnemyAnimation.PlayHit();
-    }
-
-    private IEnumerator EndAttackAnimationCoroutine()
-    {
-        yield return new WaitForSeconds(0.5f);
-        IsAttackingAnimation = false;
+        if (IsAttackingAnimation)
+        {
+            EnemyAnimation.SetHit(IsAttackingAnimation);
+        }
     }
 
     protected virtual void Die()
@@ -215,11 +212,7 @@ public abstract class Enemy : NetworkBehaviour
 
     private void OnAttackChanged()
     {
-        if (IsAttackingAnimation)
-        {
-            EnemyAnimation.PlayHit();
-            StartCoroutine(EndAttackAnimationCoroutine());
-        }
+        EnemyAnimation.SetHit(IsAttackingAnimation);
     }
 
     private IEnumerator DieCoroutine()

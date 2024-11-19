@@ -152,6 +152,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bullet_Pistol Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 8300234299374153594, guid: 7a74affff312e60489fcdb495dadb925, type: 3}
+      propertyPath: UsePreciseRotation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8300234299374153594, guid: 7a74affff312e60489fcdb495dadb925, type: 3}
+      propertyPath: _interpolationTarget
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8404703876980180496, guid: 7a74affff312e60489fcdb495dadb925, type: 3}
       propertyPath: SortKey
       value: 797746913

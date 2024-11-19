@@ -25,13 +25,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8586047491943448416}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6889892166459157854}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!212 &4728423892519324694
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -136,6 +136,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bullet_ShotGun Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 8300234299374153594, guid: 7a74affff312e60489fcdb495dadb925, type: 3}
+      propertyPath: UsePreciseRotation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8300234299374153594, guid: 7a74affff312e60489fcdb495dadb925, type: 3}
+      propertyPath: _interpolationTarget
+      value: 
+      objectReference: {fileID: 5921273660111713167}
     - target: {fileID: 8404703876980180496, guid: 7a74affff312e60489fcdb495dadb925, type: 3}
       propertyPath: SortKey
       value: 1104673877

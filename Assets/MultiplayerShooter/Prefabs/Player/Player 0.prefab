@@ -757,7 +757,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6777956050134605895}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -913,6 +913,7 @@ MonoBehaviour:
   _CurrentHP: 0
   _Kills: 0
   _ActiveSkinIndex: 0
+  _ActiveWeaponIndex: 0
   _AllDamage: 0
   _IsAlive: 0
   _ActiveWeapon: {fileID: 0}
